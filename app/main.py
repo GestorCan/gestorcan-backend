@@ -50,6 +50,7 @@ from app.models.residencias import Residencia
 from app.models.contador_factura import ContadorFactura
 from app.models.verifactu_registro import VeriFactuRegistro
 app = FastAPI()
+
 Base.metadata.create_all(bind=engine)
 
 
