@@ -42,6 +42,7 @@ from app.models.estancia import Estancia
 from app.models.factura import Factura
 from app.models.habitacion import Habitacion
 from app.models.asignacion_habitacion import AsignacionHabitacion
+from app.models.tarifa_model import Tarifa
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
 
