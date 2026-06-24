@@ -43,6 +43,12 @@ from app.models.factura import Factura
 from app.models.habitacion import Habitacion
 from app.models.asignacion_habitacion import AsignacionHabitacion
 from app.models.tarifa_model import Tarifa
+from app.models.gasto import Gasto
+from app.models.proveedor import Proveedor
+from app.models.tipo_gasto import TipoGasto
+from app.models.residencias import Residencia
+from app.models.contador_factura import ContadorFactura
+from app.models.verifactu_registro import VeriFactuRegistro
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
 
