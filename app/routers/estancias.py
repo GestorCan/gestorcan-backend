@@ -42,8 +42,8 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_
 
-emplates = Jinja2Templates(directory="app/templates")
-precio = obtener_precio_tarifa("estancia_dia", "normal")
+templates = Jinja2Templates(directory="app/templates")
+precio = 0
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATES_PATH = os.path.join(BASE_DIR, "templates")
 output_dir = os.path.join(BASE_DIR, "media", "albaranes")
