@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" translate="no">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <title>{{ titulo }} | GestorCan</title>
+
+    <link rel="stylesheet" href="/static/css/dashboard.css?v=105">
+</head>
+
+<body>
+
+<aside class="sidebar">
+    <div class="brand">
+    <img src="/static/logos/logo_1.png" alt="GestorCan" class="brand-logo">
+    <div>
+        <h1>GestorCan</h1>
+        <span>Residencias caninas</span>
+    </div>
+</div>
+
+    <nav class="menu">
+        <a href="/Dashboard" class="nav-link"> <i data-lucide="layout-dashboard"></i> <span>Dashboard</span></a>
+         <a href="/config-residencia" class="nav-link"> <i data-lucide="cog"></i> <span>Configuracion</span></a>
+         <a href="/dashboard/clientes" class="nav-link"> <i data-lucide="users"></i> <span>Clientes</span></a>
+        <a href="/dashboard/mascotas" class="nav-link"> <i data-lucide="dog"></i> <span>Mascotas</span></a>
+        <a href="/estancias/listado"class="nav-link"> <i data-lucide="home"></i> <span>estancias</span></a>
+       <a href="/tarifas/panel" class="nav-link"><i data-lucide="badge-euro"></i><span>Tarifas</span></a>
+        <a href="/fiscal" class="nav-link"> <i data-lucide="landmark"></i> <span>Fiscal</span></a>
+        <a href="/gastos"> <i data-lucide="receipt"></i> <span>Gastos</span></a>
+        <a href="/dashboard/informes" class="nav-link"><i data-lucide="bar-chart-3"></i><span>Informes</span></a>
+        <a href="/ocupacion" class="nav-link"><i data-lucide="bed-double"></i><span>Ocupación</span></a>
+
+    </nav>
+</aside>
+
+<main class="content">
+    {% block content %}{% endblock %}
+</main>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<script>
+    lucide.createIcons();
+</script>
+
+</body>
+</html>

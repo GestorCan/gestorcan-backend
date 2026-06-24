@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">Mascotas</span>
+        <h2>Editar mascota</h2>
+        <p>Modificar datos de mascota.</p>
+    </div>
+
+    <a href="/dashboard/mascotas" class="primary-button">
+        Volver
+    </a>
+</section>
+
+<section class="panel">
+
+    <form
+    method="post"
+     action="/dashboard/mascotas/{{ mascota.id }}/editar"
+    class="form-dashboard"
+    enctype="multipart/form-data"
+>
+
+        <div class="form-grid">
+
+            <div class="field">
+                <label>Cliente *</label>
+
+                <select name="cliente_id" required>
+
+                    {% for c in clientes %}
+
+                    <option
+                        value="{{ c.id }}"
+                        {% if c.id == mascota.cliente_id %}
+                        selected
+                        {% endif %}
+                    >
+                        {{ c.nombre }} {{ c.apellidos or "" }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Nombre *</label>
+
+                <input
+                    type="text"
+                    name="nombre"
+                    value="{{ mascota.nombre or '' }}"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>Raza</label>
+
+                <input
+                    type="text"
+                    name="raza"
+                    value="{{ mascota.raza or '' }}"
+                >
+            </div>
+
+            <div class="field">
+                <label>Sexo</label>
+
+                <select name="sexo">
+
+                    <option value="Macho"
+                        {% if mascota.sexo =="Macho" %}
+                        selected
+                        {% endif %}
+                    >
+                        Macho
+                    </option>
+
+                    <option value="Hembra"
+                        {% if mascota.sexo =="Hembra" %}
+                        selected
+                        {% endif %}
+                    >
+                        Hembra
+                    </option>
+
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Tamaño</label>
+
+                <select name="tamano">
+
+                    <option value="Pequeño"
+                        {% if mascota.tamano =="Pequeño" %}
+                        selected
+                        {% endif %}
+                    >
+                        Pequeño
+                    </option>
+
+                    <option value="Mediano"
+                        {% if mascota.tamano =="Mediano" %}
+                        selected
+                        {% endif %}
+                    >
+                        Mediano
+                    </option>
+
+                    <option value="Grande"
+                        {% if mascota.tamano =="Grande" %}
+                        selected
+                        {% endif %}
+                    >
+                        Grande
+                    </option>
+
+                    <option value="Gigante"
+                        {% if mascota.tamano =="Gigante" %}
+                        selected
+                        {% endif %}
+                    >
+                        Gigante
+                    </option>
+
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Edad</label>
+
+                <input
+                    type="text"
+                    name="edad"
+                    value="{{ mascota.edad or '' }}"
+                >
+            </div>
+
+            <div class="field">
+                <label>Número chip</label>
+
+                <input
+                    type="text"
+                    name="numero_chip"
+                    value="{{ mascota.numero_chip or '' }}"
+                >
+            </div>
+
+            <div class="field">
+                <label>Vacunas</label>
+
+                <select name="vacunas">
+
+                    <option value="Sí"
+                        {% if mascota.vacunas =="Sí" %}
+                        selected
+                        {% endif %}
+                    >
+                        Sí
+                    </option>
+
+                    <option value="No"
+                        {% if mascota.vacunas =="No" %}
+                        selected
+                        {% endif %}
+                    >
+                        No
+                    </option>
+
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Comp. Personas</label>
+
+                <input
+                    type="text"
+                    name="comportamiento_personas"
+                    value="{{ mascota.comportamiento_personas or '' }}"
+                >
+            </div>
+
+            <div class="field">
+                <label>Comp. Perros</label>
+
+                <input
+                    type="text"
+                    name="comportamiento_perros"
+                    value="{{ mascota.comportamiento_perros or '' }}"
+                >
+            </div>
+<div class="field">
+    <label>Foto</label>
+
+    {% if mascota.foto %}
+    <div style="margin-bottom:12px;">
+        <img src="{{ mascota.foto }}"
+             alt="Foto de {{ mascota.nombre }}"
+             style="width:160px;height:225px;object-fit:cover;border-radius:16px;">
+    </div>
+{% endif %}
+
+    <input type="file" name="foto" accept="image/*">
+
+    <small style="color:#6b7280;">
+        Selecciona una nueva imagen solo si deseas reemplazar la actual.
+    </small>
+</div>
+
+
+
+
+
+
+
+
+        <div class="field">
+            <label>Enfermedades / medicación</label>
+
+            <textarea
+                name="enfermedades_medicacion"
+            >{{ mascota.enfermedades_medicacion or '' }}</textarea>
+        </div>
+
+        <div class="field">
+            <label>Observaciones</label>
+
+            <textarea
+                name="observaciones"
+            >{{ mascota.observaciones or '' }}</textarea>
+        </div>
+
+        <button type="submit" class="primary-button">
+            Guardar cambios
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}

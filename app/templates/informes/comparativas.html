@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">Analytics</span>
+        <h2>Comparativas mensuales</h2>
+        <p>Evolución mensual de ingresos y actividad.</p>
+    </div>
+</section>
+
+<section class="panel">
+
+    <div class="chart-card">
+        <h3>Ingresos mensuales</h3>
+        <canvas id="ingresosChart"></canvas>
+    </div>
+
+    <div class="chart-card" style="margin-top:32px;">
+        <h3>Estancias mensuales</h3>
+        <canvas id="estanciasChart"></canvas>
+    </div>
+
+    <div style="margin-top:32px; overflow-x:auto;">
+
+        <table class="table-modern" id="tablaComparativas">
+
+            <thead>
+                <tr>
+                    <th>Mes</th>
+                    <th>Ingresos</th>
+                    <th>Estancias</th>
+                    <th>Clientes</th>
+                    <th>Días</th>
+                    <th>Ticket medio</th>
+                </tr>
+            </thead>
+
+            <tbody></tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+async function cargarComparativas() {
+
+    const response = await fetch("/api/comparativas-mensuales");
+
+    const data = await response.json();
+
+    const labels = data.map(x => x.mes);
+
+    // =========================
+    // INGRESOS
+    // =========================
+
+    new Chart(
+        document.getElementById("ingresosChart"),
+        {
+            type: "line",
+
+            data: {
+                labels: labels,
+
+                datasets: [{
+                    label: "Ingresos €",
+                    data: data.map(x => x.ingresos),
+                    borderColor: "#2563eb",
+                    backgroundColor: "#2563eb"
+                }]
+            },
+
+            options: {
+                responsive: true
+            }
+        }
+    );
+
+    // =========================
+    // ESTANCIAS
+    // =========================
+
+    new Chart(
+        document.getElementById("estanciasChart"),
+        {
+            type: "bar",
+
+            data: {
+                labels: labels,
+
+                datasets: [{
+                    label: "Estancias",
+                    data: data.map(x => x.estancias),
+                    backgroundColor: "#10b981"
+                }]
+            },
+
+            options: {
+                responsive: true
+            }
+        }
+    );
+
+    // =========================
+    // TABLA
+    // =========================
+
+    const tbody = document.querySelector("#tablaComparativas tbody");
+
+    tbody.innerHTML = "";
+
+    data.forEach(x => {
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${x.mes}</td>
+                <td>${x.ingresos} €</td>
+                <td>${x.estancias}</td>
+                <td>${x.clientes}</td>
+                <td>${x.dias}</td>
+                <td>${x.ticket_medio} €</td>
+            </tr>
+        `;
+    });
+}
+
+cargarComparativas();
+
+</script>
+
+{% endblock %}

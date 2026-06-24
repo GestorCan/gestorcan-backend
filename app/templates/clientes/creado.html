@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">Cliente creado</span>
+        <h2>{{ cliente.nombre }}</h2>
+        <p>El cliente se ha guardado correctamente.</p>
+    </div>
+</section>
+
+<section class="panel">
+    <h3>¿Quieres añadir una mascota para este cliente?</h3>
+
+    <div style="display:flex; gap:12px; margin-top:20px;">
+        <a class="primary-button"
+   href="/dashboard/mascotas/nueva?cliente_id={{ cliente.id }}">
+    + Añadir mascota
+</a>
+
+        <a class="secondary-button"
+           href="/dashboard/clientes">
+            Volver a clientes
+        </a>
+    </div>
+</section>
+
+{% endblock %}

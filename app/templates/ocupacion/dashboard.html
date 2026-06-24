@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">OCUPACIÓN</span>
+        <h1>Estado actual del resort</h1>
+        <p>Visualización de habitaciones y ocupación activa.</p>
+    </div>
+
+</section>
+<form method="get" action="/ocupacion" class="date-filter">
+    <label for="fecha">Ver ocupación del día:</label>
+
+    <input
+        type="date"
+        id="fecha"
+        name="fecha"
+        value="{{ hoy }}"
+    >
+
+    <button type="submit">
+        Ver día
+    </button>
+</form>
+
+
+
+<div class="occupancy-filters">
+    <button type="button" class="filter-btn" data-filter="todas">Todas</button>
+    <button type="button" class="filter-btn" data-filter="libre">Libres</button>
+    <button type="button" class="filter-btn" data-filter="ocupada">Ocupadas</button>
+    <button type="button" class="filter-btn" data-filter="compartida">Compartidas</button>
+    <button type="button" class="filter-btn" data-filter="entra_hoy">Entran hoy</button>
+    <button type="button" class="filter-btn" data-filter="sale_hoy">Salen hoy</button>
+</div>
+<section class="occupancy-grid">
+
+    {% for h in habitaciones %}
+
+    <div
+    class="room-card {{ h.estado }}"
+    data-estado="{{ h.estado }}"
+    {% if h.estancia_id %}
+        data-estancia-id="{{ h.estancia_id }}"
+        data-mascota-id="{{ h.estancia.mascota.id if h.estancia and h.estancia.mascota else '' }}"
+        data-cliente-id="{{ h.estancia.cliente.id if h.estancia and h.estancia.cliente else '' }}"
+        style="cursor:pointer"
+    {% endif %}
+>
+
+       <div class="room-header">
+    <h3>{{ h.nombre }}</h3>
+
+    {% if h.estado == "libre" %}
+        <span class="status status-free">Libre</span>
+
+    {% elif h.estado == "ocupada" %}
+        <span class="status status-busy">Ocupada</span>
+
+    {% elif h.estado == "sale_hoy" %}
+        <span class="status status-warning">Sale hoy</span>
+
+    {% elif h.estado == "entra_hoy" %}
+        <span class="status status-info">Entra hoy</span>
+
+    {% elif h.estado == "compartida" %}
+        <span class="status status-shared">Compartida</span>
+
+    {% elif h.estado == "conflicto" %}
+        <span class="status status-danger">Conflicto</span>
+
+    {% endif %}
+</div>
+
+        <div class="room-body">
+
+    {% if h.estancia %}
+
+        {% if h.estado == "compartida" %}
+
+            <p><strong>Compartida:</strong> {{ h.num_estancias }} mascotas</p>
+
+            {% for estancia in h.estancias %}
+                <p>
+                    <strong>Mascota:</strong>
+                    {{ estancia.mascota.nombre if estancia.mascota else "-" }}
+                </p>
+
+                <p>
+                    <strong>Cliente:</strong>
+                    {% if estancia.cliente %}
+                        {{ estancia.cliente.nombre }} {{ estancia.cliente.apellidos or "" }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </p>
+
+                <p><strong>Salida:</strong> {{ estancia.fecha_salida }}</p>
+
+                {% if not loop.last %}
+                    <hr>
+                {% endif %}
+            {% endfor %}
+
+        {% else %}
+
+            <p>
+                <strong>Mascota:</strong>
+                {{ h.estancia.mascota.nombre if h.estancia.mascota else "-" }}
+            </p>
+
+            <p>
+                <strong>Cliente:</strong>
+                {% if h.estancia.cliente %}
+                    {{ h.estancia.cliente.nombre }} {{ h.estancia.cliente.apellidos or "" }}
+                {% else %}
+                    -
+                {% endif %}
+            </p>
+
+            <p><strong>Salida:</strong> {{ h.estancia.fecha_salida }}</p>
+
+        {% endif %}
+
+    {% else %}
+
+        <p>Disponible</p>
+        <p><strong>Grupo:</strong> {{ h.grupo }}</p>
+
+    {% endif %}
+
+</div>
+
+    </div>
+
+    {% endfor %}
+
+
+
+<div id="roomContextMenu" class="context-menu">
+    <button data-action="editar">✏️ Editar estancia</button>
+    <button data-action="mascota">🐶 Ver mascota</button>
+    <button data-action="cliente">👤 Ver cliente</button>
+    <button data-action="pdf">📄 Generar albarán</button>
+</div>
+</section>
+<script>
+document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const filtro = btn.dataset.filter;
+
+        document.querySelectorAll(".room-card").forEach(card => {
+            const estado = card.dataset.estado;
+
+            if (
+                filtro === "todas" ||
+                estado === filtro ||
+                (filtro === "ocupada" && estado === "compartida")
+            ) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    });
+});
+
+const contextMenu = document.getElementById("roomContextMenu");
+let selectedRoomCard = null;
+contextMenu.querySelectorAll("button").forEach(btn => {
+    btn.style.display = "block";
+    btn.style.width = "100%";
+});
+document.querySelectorAll(".room-card").forEach(card => {
+
+    card.addEventListener("click", () => {
+        if (card.dataset.menuAbierto === "1") return;
+
+        const estanciaId = card.dataset.estanciaId;
+        if (!estanciaId) return;
+
+        window.location.href = `/estancias/${estanciaId}/editar`;
+    });
+
+    card.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const estanciaId = card.dataset.estanciaId;
+    if (!estanciaId) return;
+
+    selectedRoomCard = card;
+
+    contextMenu.style.display = "block";
+    contextMenu.style.position = "fixed";
+    contextMenu.style.zIndex = "999999";
+
+    const menuWidth = contextMenu.offsetWidth;
+    const menuHeight = contextMenu.offsetHeight;
+
+    let x = e.pageX;
+    let y = e.pageY;
+
+    if (x + menuWidth > window.innerWidth) {
+        x = window.innerWidth - menuWidth - 10;
+    }
+
+    if (y + menuHeight > window.innerHeight) {
+        y = window.innerHeight - menuHeight - 10;
+    }
+
+    contextMenu.style.left = `${x}px`;
+    contextMenu.style.top = `${y}px`;
+});
+
+});
+
+document.addEventListener("click", function () {
+    contextMenu.style.display = "none";
+
+    document.querySelectorAll(".room-card").forEach(card => {
+        card.dataset.menuAbierto = "0";
+    });
+});
+
+contextMenu.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", function (e) {
+        e.stopPropagation();
+
+        if (!selectedRoomCard) return;
+
+        const action = this.dataset.action;
+        const estanciaId = selectedRoomCard.dataset.estanciaId;
+        const mascotaId = selectedRoomCard.dataset.mascotaId;
+        const clienteId = selectedRoomCard.dataset.clienteId;
+
+        if (action === "editar") {
+            window.location.href = `/estancias/${estanciaId}/editar`;
+        }
+
+        if (action === "mascota" && mascotaId) {
+            window.location.href = `/dashboard/mascotas/${mascotaId}/editar`;
+        }
+
+        if (action === "cliente" && clienteId) {
+            window.location.href = `/dashboard/clientes/${clienteId}/editar`;
+        }
+
+        if (action === "pdf") {
+            window.open(`/estancias/${estanciaId}/pdf`, "_blank");
+        }
+
+        contextMenu.style.display = "none";
+    });
+});
+</script>
+
+{% endblock %}

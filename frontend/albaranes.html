@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Albaranes</title>
+</head>
+<body>
+
+<h2>Listado de albaranes</h2>
+
+<input type="text" id="filtroCliente" placeholder="Cliente">
+<input type="date" id="filtroFecha">
+<button onclick="cargar()">Filtrar</button>
+
+<table border="1" width="100%" style="margin-top:20px;">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Cliente</th>
+      <th>Mascota</th>
+      <th>Entrada</th>
+      <th>Salida</th>
+      <th>Total</th>
+      <th>PDF</th>
+    </tr>
+  </thead>
+  <tbody id="tabla"></tbody>
+</table>
+
+<script>
+const API = "http://127.0.0.1:8000";
+
+async function cargar() {
+  console.log("Cargando albaranes...");
+
+  const cliente = document.getElementById("filtroCliente").value;
+  const fecha = document.getElementById("filtroFecha").value;
+
+  let url = `${API}/albaranes/`;
+  const params = new URLSearchParams();
+
+  if (cliente) params.append("cliente", cliente);
+  if (fecha) params.append("fecha", fecha);
+
+  if (params.toString()) {
+    url += `?${params.toString()}`;
+  }
+
+  console.log("URL:", url);
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  console.log("DATOS:", data);
+
+  const tabla = document.getElementById("tabla");
+  tabla.innerHTML = "";
+
+  data.forEach(a => {
+    const fila = document.createElement("tr");
+
+    fila.innerHTML = `
+      <td>${a.id}</td>
+      <td>${a.cliente}</td>
+      <td>${a.mascota}</td>
+      <td>${a.fecha_entrada}</td>
+      <td>${a.fecha_salida}</td>
+      <td>${a.total}</td>
+      <td>
+        <button onclick="verPDF(${a.id})">Ver PDF</button>
+      </td>
+    `;
+
+    tabla.appendChild(fila);
+  });
+}
+
+function verPDF(id) {
+  window.open(`${API}/albaranes/${id}/pdf`, "_blank");
+}
+
+window.onload = cargar;
+</script>
+
+</body>
+</html>
+

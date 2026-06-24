@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">Clientes</span>
+        <h2>Editar cliente</h2>
+        <p>Modifica los datos del propietario.</p>
+    </div>
+
+    <a href="/dashboard/clientes" class="primary-button">Volver</a>
+</section>
+
+<section class="panel">
+    <form method="post" action="/dashboard/clientes/{{ cliente.id }}/editar" class="form-dashboard">
+
+        <div class="form-grid">
+            <div class="field">
+                <label>Nombre *</label>
+                <input type="text" name="nombre" value="{{ cliente.nombre or '' }}" required>
+            </div>
+
+            <div class="field">
+                <label>Apellidos</label>
+                <input type="text" name="apellidos" value="{{ cliente.apellidos or '' }}">
+            </div>
+
+            <div class="field">
+    <label>Tipo de documento</label>
+    <select name="tipo_documento">
+        <option value="NIF" {% if cliente.tipo_documento == "NIF" %}selected{% endif %}>NIF</option>
+        <option value="NIE" {% if cliente.tipo_documento == "NIE" %}selected{% endif %}>NIE</option>
+        <option value="CIF" {% if cliente.tipo_documento == "CIF" %}selected{% endif %}>CIF</option>
+        <option value="PASAPORTE" {% if cliente.tipo_documento == "PASAPORTE" %}selected{% endif %}>PASAPORTE</option>
+        <option value="OTRO" {% if cliente.tipo_documento == "OTRO" %}selected{% endif %}>OTRO</option>
+    </select>
+</div>
+
+<div class="field">
+    <label>Número de documento</label>
+    <input type="text" name="dni" value="{{ cliente.dni or '' }}">
+</div>
+      </div>
+   {% if error %}
+<div class="toast-error">
+    ⚠ {{ error }}
+</div>
+
+<script>
+setTimeout(() => {
+    const toast = document.querySelector(".toast-error");
+    if (toast) {
+        toast.remove();
+    }
+}, 4000);
+</script>
+{% endif %}
+
+            <div class="field">
+                <label>Teléfono</label>
+                <input type="text" name="telefono" value="{{ cliente.telefono or '' }}">
+            </div>
+
+            <div class="field">
+                <label>Email</label>
+                <input type="email" name="email" value="{{ cliente.email or '' }}">
+            </div>
+
+            <div class="field">
+                <label>Dirección</label>
+                <input type="text" name="direccion" value="{{ cliente.direccion or '' }}">
+            </div>
+
+            <div class="field">
+                <label>Código postal</label>
+                <input type="text" name="codigo_postal" value="{{ cliente.codigo_postal or '' }}">
+            </div>
+
+            <div class="field">
+                <label>Población</label>
+                <input type="text" name="poblacion" value="{{ cliente.poblacion or '' }}">
+            </div>
+
+            <div class="field">
+                <label>Provincia</label>
+                <input type="text" name="provincia" value="{{ cliente.provincia or '' }}">
+            </div>
+
+            <div class="field">
+                <label>Redes sociales</label>
+                <input type="text" name="redes_sociales" value="{{ cliente.redes_sociales or '' }}">
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Observaciones</label>
+            <textarea name="observaciones">{{ cliente.observaciones or '' }}</textarea>
+        </div>
+
+        <button type="submit" class="primary-button">Guardar cambios</button>
+
+    </form>
+</section>
+<section class="panel mascotas-panel">
+
+    <div class="mascotas-header">
+        <div>
+            <h3>Mascotas asociadas</h3>
+            <p>Mascotas vinculadas a este cliente.</p>
+        </div>
+
+        <a href="/dashboard/mascotas/nueva?cliente_id={{ cliente.id }}"
+           class="primary-button">
+            + Nueva mascota
+        </a>
+    </div>
+
+    {% if cliente.mascotas %}
+
+    <div class="mascotas-grid">
+
+        {% for m in cliente.mascotas %}
+
+        <div class="pet-card">
+
+            <div class="pet-photo">
+                {% if m.foto %}
+                    <img src="{{ m.foto }}" alt="{{ m.nombre }}">
+                {% else %}
+                    <img src="/static/img/default-dog.png" alt="Sin foto">
+                {% endif %}
+            </div>
+
+            <div class="pet-info">
+                <h4>{{ m.nombre or "-" }}</h4>
+
+                <p>
+                    {{ m.raza or "Sin raza" }}
+                    {% if m.sexo %}
+                        · {{ m.sexo }}
+                    {% endif %}
+                </p>
+
+                <strong>
+                    {% if m.numero_chip %}
+                        Chip: {{ m.numero_chip }}
+                    {% else %}
+                        Sin chip registrado
+                    {% endif %}
+                </strong>
+
+                <a href="/dashboard/mascotas/{{ m.id }}/editar"
+                   class="vf-button secondary">
+                    Editar
+                </a><div class="pet-actions">
+
+
+
+    <form method="post"
+          action="/dashboard/mascotas/{{ m.id }}/eliminar"
+          style="display:inline;">
+
+        <button class="vf-button danger"
+                type="submit"
+                onclick="return confirm('¿Eliminar esta mascota? Esta acción no se puede deshacer.');">
+            Eliminar
+        </button>
+
+    </form>
+
+</div>
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <p class="vf-muted">
+        Este cliente todavía no tiene mascotas asociadas.
+    </p>
+
+    {% endif %}
+<style>
+        .toast-error {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+
+    background: #dc2626;
+    color: white;
+
+    padding: 14px 20px;
+    border-radius: 10px;
+
+    box-shadow: 0 8px 20px rgba(0,0,0,.15);
+}
+
+</style>
+</section>
+{% endblock %}

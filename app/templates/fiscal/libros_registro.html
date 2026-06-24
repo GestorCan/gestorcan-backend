@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">FISCAL</span>
+        <h1>Libros Registro</h1>
+        <p>Facturas emitidas y control fiscal.</p>
+    </div>
+</section>
+
+<section class="cards-grid">
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>Facturas</h3>
+            <p style="font-size:2rem;">{{ facturas|length }}</p>
+        </div>
+    </div>
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>Base imponible</h3>
+            <p style="font-size:2rem;">{{ "%.2f"|format(total_base) }} €</p>
+        </div>
+    </div>
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>IVA</h3>
+            <p style="font-size:2rem;">{{ "%.2f"|format(total_iva) }} €</p>
+        </div>
+    </div>
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>Total</h3>
+            <p style="font-size:2rem;">{{ "%.2f"|format(total_facturas) }} €</p>
+        </div>
+    </div>
+
+</section>
+
+<section class="panel">
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h2>Facturas emitidas</h2>
+
+        <a href="/fiscal" class="btn-secondary">
+            Volver a Fiscal
+        </a>
+    </div>
+
+    <table class="table">
+
+        <thead>
+            <tr>
+                <th>Factura</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Base</th>
+                <th>IVA</th>
+                <th>Total</th>
+                <th>VeriFactu</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for f in facturas %}
+
+            <tr>
+                <td>
+                    <strong>{{ f.numero_factura }}</strong>
+                </td>
+
+                <td>
+                    {{ f.fecha.strftime('%d/%m/%Y') if f.fecha else '-' }}
+                </td>
+
+                <td>
+                    {% if f.cliente %}
+                        {{ f.cliente.nombre }} {{ f.cliente.apellidos or "" }}
+                    {% else %}
+                        Cliente {{ f.cliente_id }}
+                    {% endif %}
+                </td>
+
+                <td>{{ "%.2f"|format(f.base_imponible or 0) }} €</td>
+
+                <td>{{ "%.2f"|format(f.iva or 0) }} €</td>
+
+                <td>
+                    <strong>{{ "%.2f"|format(f.total or 0) }} €</strong>
+                </td>
+
+                <td>
+                    {% if f.verifactu_enviado %}
+                        <span class="badge badge-success">Enviado</span>
+                    {% else %}
+                        <span class="badge">Pendiente</span>
+                    {% endif %}
+                </td>
+                <td>
+    <a href="/facturas/{{ f.id }}/rectificar"
+       class="btn-secondary">
+        Rectificar
+    </a>
+</td>
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</section>
+
+<style>
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.85rem 1rem;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    .table th {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        color: #6b7280;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        background: #e5e7eb;
+        color: #374151;
+    }
+
+    .badge-success {
+        background: #dcfce7;
+        color: #166534;
+    }
+</style>
+
+{% endblock %}

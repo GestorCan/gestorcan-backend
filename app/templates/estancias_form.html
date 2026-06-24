@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nueva Estancia</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 14px;
+    background: #ffffff;
+    color: #222;
+    overflow: hidden;
+}
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .container {
+    display: grid;
+    grid-template-columns: 760px 1fr;
+    gap: 22px;
+    align-items: start;
+    height: calc(100vh - 85px);
+}
+
+.col-izquierda {
+    max-width: 760px;
+}
+
+.col-derecha {
+    min-width: 0;
+    overflow-y: auto;
+}
+
+
+.bloque {
+    padding: 14px;
+    margin-bottom: 14px;
+}
+
+.bloque h2 {
+    font-size: 17px;
+    margin-bottom: 10px;
+}
+
+label {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+input,
+select,
+textarea {
+    padding: 5px;
+    font-size: 13px;
+}
+
+.fila {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+button {
+    margin-top: 10px;
+    padding: 8px 14px;
+}
+        .bloque {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 20px;
+            background: #fff;
+        }
+
+        .bloque h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .fila {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .fila-check {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px;
+            align-items: center;
+            margin-top: 12px;
+        }
+
+        .fila-check input[type="checkbox"] {
+            width: auto;
+        }
+
+        .total-box input {
+            font-size: 18px;
+            font-weight: bold;
+            background: #f7f7f7;
+        }
+
+        button {
+            margin-top: 18px;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            background: #222;
+            color: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background: #f5f5f5;
+        }
+
+        #foto_mascota {
+            width: 160px;
+            height: 160px;
+            object-fit: cover;
+            object-position: top;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .dato-linea {
+            margin-bottom: 6px;
+        }
+
+        .dato-linea strong {
+            display: inline-block;
+            min-width: 120px;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .fila {
+                grid-template-columns: 1fr;
+            }
+        }
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+body {
+    padding: 15px;
+}
+
+.container {
+    height: calc(100vh - 60px);
+}
+
+.col-izquierda, .col-derecha {
+    overflow-y: auto;
+    padding-right: 8px;
+}
+label {
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+input, select, textarea {
+    padding: 6px;
+    font-size: 13px;
+}
+
+.bloque {
+    padding: 14px;
+}
+.bloque {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+input, select {
+    height: 32px;
+}
+
+textarea {
+    height: 70px;
+}
+
+.fila {
+    gap: 8px;
+}
+
+label {
+    margin-top: 4px;
+}
+ .col-derecha .bloque {
+    min-height: 110px;
+}
+#tabla_estancias td:last-child {
+    max-width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* ===== FORMULARIO ESTANCIAS ===== */
+
+.form-panel {
+    position: sticky;
+    top: 20px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+.form-actions {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 16px 0 0;
+    border-top: 1px solid #e5e7eb;
+}
+/* ===== FORMULARIO ESTANCIAS ===== */
+
+.form-panel {
+    position: sticky;
+    top: 20px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+ <div class="form-grid-2">
+
+    <div class="form-section full-width">
+        Datos principales
+    </div>
+
+    <div class="form-section">
+        Servicios por día
+    </div>
+
+    <div class="form-section">
+        Servicios por km
+    </div>
+
+    <div class="form-section">
+        Otros
+    </div>
+
+    <div class="form-section">
+        Resumen económico
+    </div>
+
+</div>
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.form-section {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 12px;
+    background: #fff;
+    margin-top: 14px;
+}
+
+.form-section h3 {
+    margin: 0 0 10px;
+    color: #0d6efd;
+    font-size: 15px;
+}
+
+.servicios-grid {
+    margin-top: 14px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+@media (max-width: 900px) {
+    .form-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+  #formEstancia .form-grid-2 {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+}
+
+#formEstancia .form-section {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 12px;
+    background: #fff;
+    margin-top: 14px;
+}
+
+#formEstancia .form-section h3 {
+    margin: 0 0 10px;
+    color: #0d6efd;
+    font-size: 15px;
+}
+
+@media (max-width: 1100px) {
+    #formEstancia .form-grid-2 {
+        grid-template-columns: 1fr !important;
+    }
+}
+.alerta-facturada {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+
+    </style>
+</head>
+
+<body>
+
+<h1>Alta de estancia / albarán</h1>
+
+<div class="container">
+
+    <!-- COLUMNA IZQUIERDA: FORMULARIO -->
+    <div class="col-izquierda form-panel">
+        <div class="bloque">
+            <h2>Datos estancia</h2>
+{% if estancia is defined and estancia and estancia.facturado %}
+<div class="alert alert-warning">
+    ⚠️ Esta estancia ya está facturada. Solo puede consultarse.
+</div>
+{% endif %}
+         <form
+    id="formEstancia"
+    data-estancia-id="{{ estancia.id if estancia is defined and estancia else '' }}"
+    data-habitacion-actual="{{ estancia.habitacion if estancia is defined and estancia else '' }}"
+    data-mascota-actual="{{ estancia.mascota_id if estancia is defined and estancia else '' }}"
+>
+
+<div class="form-grid-2">
+
+    <div>
+        <label>Cliente:</label>
+        <select name="cliente_id" id="cliente" required>
+            <option value="">-- Seleccionar cliente --</option>
+            {% for c in clientes %}
+                <option value="{{ c.id }}"
+                    {% if estancia is defined and estancia and estancia.cliente_id == c.id %}
+                        selected
+                    {% endif %}
+                >
+                    {{ c.nombre }} {{ c.apellidos or '' }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label>Mascota:</label>
+        <select name="mascota_id" id="mascota"></select>
+    </div>
+
+    <div>
+        <label>Fecha entrada:</label>
+        <input type="date" name="fecha_entrada" id="fecha_entrada" required
+               value="{{ estancia.fecha_entrada if estancia is defined and estancia else '' }}">
+    </div>
+
+    <div>
+        <label>Hora entrada:</label>
+        <input type="time" name="hora_entrada" id="hora_entrada"
+               value="{{ estancia.hora_entrada if estancia is defined and estancia and estancia.hora_entrada else '' }}">
+    </div>
+
+    <div>
+        <label>Fecha salida:</label>
+        <input type="date" name="fecha_salida" id="fecha_salida" required
+               value="{{ estancia.fecha_salida if estancia is defined and estancia else '' }}">
+    </div>
+
+    <div>
+        <label>Hora salida:</label>
+        <input type="time" name="hora_salida" id="hora_salida"
+               value="{{ estancia.hora_salida if estancia is defined and estancia and estancia.hora_salida else '' }}">
+    </div>
+
+    <div>
+        <label>Días:</label>
+        <input type="number" id="dias" readonly
+               value="{{ estancia.num_dias if estancia is defined and estancia else 0 }}">
+    </div>
+
+    <div>
+        <label>Habitación:</label>
+        <select name="habitacion" id="habitacion" required></select>
+    </div>
+
+    <div>
+        <label>Tipo precio estancia:</label>
+        <select id="tipo_precio_dia" name="tipo_precio_dia">
+            {% for tarifa in tarifas_dia %}
+                <option value="{{ tarifa.tipo }}"
+                    {% if estancia is defined and estancia and estancia.tipo_precio_dia == tarifa.tipo %}
+                        selected
+                    {% endif %}
+                >
+                    {{ tarifa.tipo }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label>Precio día:</label>
+        <input type="number" id="precio_dia" name="precio_dia" step="0.01"
+               value="{{ estancia.precio_dia if estancia is defined and estancia else '' }}">
+    </div>
+
+    <div>
+        <label>Extras:</label>
+        <select name="extras" id="extras">
+            <option value=""
+                {% if not estancia is defined or not estancia or not estancia.extras %}
+                    selected
+                {% endif %}
+            >
+                Sin extras
+            </option>
+
+            {% for extra in extras_tarifas %}
+                <option value="{{ extra.tipo }}"
+                    {% if estancia is defined and estancia and estancia.extras == extra.tipo %}
+                        selected
+                    {% endif %}
+                >
+                    {{ extra.tipo }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label>Importe extras:</label>
+        <input type="number" step="0.01" name="importe_extras" id="importe_extras"
+               value="{{ estancia.importe_extras if estancia is defined and estancia else '0.00' }}">
+    </div>
+
+</div>
+
+<div class="form-grid-2 servicios-grid">
+
+    <div class="form-section">
+        <h3>Servicios por día</h3>
+
+        <div class="fila-check">
+            <input type="checkbox" name="veterinario" id="veterinario"
+                   {% if estancia is defined and estancia and estancia.veterinario %}checked{% endif %}>
+            <label for="veterinario">Veterinario</label>
+        </div>
+
+        <label>Precio veterinario / día:</label>
+        <input type="number" step="0.01" name="importe_veterinario" id="importe_veterinario"
+               value="{{ estancia.importe_veterinario if estancia is defined and estancia else '0.00' }}">
+
+        <div class="fila-check">
+            <input type="checkbox" name="pienso" id="pienso"
+                   {% if estancia is defined and estancia and estancia.pienso %}checked{% endif %}>
+            <label for="pienso">Pienso</label>
+        </div>
+
+        <label>Precio pienso / día:</label>
+        <input type="number" step="0.01" name="importe_pienso" id="importe_pienso"
+               value="{{ estancia.importe_pienso if estancia is defined and estancia else '0.00' }}">
+
+        <div class="fila-check">
+            <input type="checkbox" name="camaras" id="camaras"
+                   {% if estancia is defined and estancia and estancia.camaras %}checked{% endif %}>
+            <label for="camaras">Cámaras</label>
+        </div>
+
+        <label>Precio cámaras / día:</label>
+        <input type="number" step="0.01" name="importe_camaras" id="importe_camaras"
+               value="{{ estancia.importe_camaras if estancia is defined and estancia else '0.00' }}">
+    </div>
+
+    <div class="form-section">
+        <h3>Transporte</h3>
+
+        <div class="fila-check">
+            <input type="checkbox" name="transporte" id="transporte"
+                   {% if estancia is defined and estancia and estancia.transporte %}checked{% endif %}>
+            <label for="transporte">Transporte</label>
+        </div>
+
+        <label>Kilómetros:</label>
+        <input type="number" id="kilometros" name="kilometros" step="0.01"
+               value="{{ estancia.kilometros if estancia is defined and estancia else '0.00' }}">
+
+        <label>Precio / Km:</label>
+        <input type="number" id="precioKm" name="precio_km" step="0.01"
+               value="{{ estancia.precio_km if estancia is defined and estancia else '0.00' }}">
+
+        <label>Importe transporte:</label>
+        <input type="number" id="importe_transporte" name="importe_transporte" step="0.01"
+               value="{{ estancia.importe_transporte if estancia is defined and estancia else '0.00' }}">
+    </div>
+
+</div>
+
+<div class="form-grid-2">
+
+    <div class="form-section">
+        <h3>Otros</h3>
+
+        <div class="fila-check">
+            <input type="checkbox" name="pagado" id="pagado"
+                   {% if estancia is defined and estancia and estancia.pagado %}checked{% endif %}>
+            <label for="pagado">Pagado</label>
+        </div>
+
+        <label>Observaciones:</label>
+        <textarea name="observaciones" id="observaciones" rows="4">{{ estancia.observaciones if estancia is defined and estancia and estancia.observaciones else '' }}</textarea>
+    </div>
+
+    <div class="form-section">
+        <h3>Resumen económico</h3>
+
+        <div class="total-box">
+            <label>Total estimado:</label>
+            <input type="text" id="total_estimado" readonly
+                   value="{{ estancia.total ~ ' €' if estancia is defined and estancia else '0.00 €' }}">
+        </div>
+{% if estancia is defined and estancia and estancia.facturado %}
+    <div class="alerta-facturada">
+        ⚠️ Esta estancia ya está facturada y no puede modificarse.
+    </div>
+{% endif %}
+
+<button type="submit" {% if estancia is defined and estancia and estancia.facturado %}disabled{% endif %}>
+    {% if estancia is defined and estancia %}
+        Guardar cambios
+    {% else %}
+        Guardar estancia
+    {% endif %}
+</button>
+
+<button type="button" id="btnPdf">
+    Generar PDF
+</button>
+
+    </div> <!-- FIN form-section Resumen económico -->
+
+</div> <!-- FIN form-grid-2 -->
+
+</form>
+
+        </div> <!-- FIN bloque -->
+    </div> <!-- FIN col-izquierda -->
+
+    <!-- COLUMNA DERECHA: INFORMACIÓN -->
+    <div class="col-derecha">
+
+        <div class="bloque">
+            <h2>Datos cliente</h2>
+            <div id="datos_cliente">
+                <p>Selecciona un cliente para ver sus datos.</p>
+            </div>
+        </div>
+
+        <div class="card">
+    <h3>Resumen del cliente</h3>
+
+<div id="resumen_estancias_cliente" class="resumen-cliente-grid">
+    <div>
+        <strong>Estancias</strong>
+        <span>-</span>
+    </div>
+    <div>
+        <strong>Total gastado</strong>
+        <span>-</span>
+    </div>
+    <div>
+        <strong>Ticket medio</strong>
+        <span>-</span>
+    </div>
+    <div>
+        <strong>Cliente desde</strong>
+        <span>-</span>
+    </div>
+    <div>
+        <strong>Nivel</strong>
+        <span>-</span>
+    </div>
+</div>
+
+
+
+
+        <div class="bloque">
+            <h2>Últimas 3 entradas</h2>
+            <table id="tabla_estancias">
+               <thead>
+    <tr>
+        <th>Entrada</th>
+        <th>Salida</th>
+        <th>Hab.</th>
+        <th>Mascota</th>
+        <th>Tarifa</th>
+        <th>Precio día</th>
+        <th>Nº días</th>
+        <th>Extras</th>
+        <th>Cámaras</th>
+        <th>Veterinario</th>
+        <th>Pienso</th>
+        <th>Transporte</th>
+        <th>Total</th>
+        <th>Pagado</th>
+        <th>Obs.</th>
+    </tr>
+</thead>
+                <tbody>
+                    <tr>
+                        <td colspan="14">Selecciona un cliente para cargar historial.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="bloque">
+
+
+
+   <div class="mascota-layout">
+
+    <div class="mascota-principal">
+        <h3>Datos mascota</h3>
+
+        <div class="mascota-contenido">
+            <img id="foto_mascota" src="" alt="Foto mascota">
+
+            <div id="datos_mascota">
+                <p>Selecciona una mascota para ver sus datos.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mascotas-secundarias-box">
+        <h3>Otras mascotas</h3>
+
+        <div id="otras_mascotas"
+             class="mascotas-grid otras-mascotas">
+        </div>
+    </div>
+
+</div>
+
+</div>
+
+
+
+<script>
+let ultimaEstanciaId = null;
+
+function calcularDias(fechaEntrada, fechaSalida, horaSalida) {
+    if (!fechaEntrada || !fechaSalida) return 0;
+
+    const entrada = new Date(fechaEntrada);
+    const salida = new Date(fechaSalida);
+
+    let dias = Math.ceil((salida - entrada) / (1000 * 60 * 60 * 24));
+
+    if (horaSalida) {
+        const [horas, minutos] = horaSalida.split(":").map(Number);
+
+        if (horas > 12 || (horas === 12 && minutos > 0)) {
+            dias += 1;
+        }
+    }
+
+    return dias > 0 ? dias : 0;
+}
+
+function recalcularTotal() {
+    const dias = Number(document.getElementById("dias").value || 0);
+    const precioDia = Number(document.getElementById("precio_dia").value || 0);
+    const extras = Number(document.getElementById("importe_extras").value || 0);
+    const camaras = Number(document.getElementById("importe_camaras").value || 0);
+    const transporte = Number(document.getElementById("importe_transporte").value || 0);
+    const veterinario = Number(document.getElementById("importe_veterinario").value || 0);
+    const pienso = Number(document.getElementById("importe_pienso").value || 0);
+
+    const total = (dias * precioDia) + extras + camaras + transporte + veterinario + pienso;
+    document.getElementById("total_estimado").value = total.toFixed(2) + " €";
+}
+
+async function obtenerTarifa(concepto, tipo) {
+
+    const res = await fetch(
+        `/tarifas/api/precio?concepto=${encodeURIComponent(concepto)}&tipo=${encodeURIComponent(tipo)}`
+    );
+    return await res.json();
+}
+
+function calcularImporteTarifa(precio, unidad, dias, kms = 0) {
+
+    if (unidad === "dia") {
+        return precio * dias;
+    }
+
+    if (unidad === "km") {
+        return precio * kms;
+    }
+
+    return precio;
+}
+
+
+
+
+
+
+
+
+
+
+
+async function aplicarPrecioDia() {
+    const tipo = document.getElementById("tipo_precio_dia").value;
+
+    const tarifa = await obtenerTarifa("estancia_dia", tipo);
+
+    document.getElementById("precio_dia").value =
+        Number(tarifa.precio || 0).toFixed(2);
+
+    recalcularTotal();
+}
+
+
+
+
+
+
+async function actualizarDiasYTotal() {
+    const entrada = document.getElementById("fecha_entrada").value;
+    const salida = document.getElementById("fecha_salida").value;
+    const horaSalida = document.getElementById("hora_salida").value;
+
+    if (new Date(entrada) > new Date(salida)) {
+        alert("La fecha de entrada no puede ser posterior a la salida.");
+        document.getElementById("dias").value = 0;
+        return;
+    }
+
+    document.getElementById("dias").value =
+        calcularDias(entrada, salida, horaSalida);
+
+    await aplicarPrecioDia();
+    await aplicarCamaras();
+    await aplicarExtra();
+    await aplicarVeterinario();
+    await aplicarPienso();
+    await calcularTransporte();
+
+    recalcularTotal();
+}
+
+async function aplicarExtra() {
+
+    const tipo = document.getElementById("extras").value;
+    const dias = Number(document.getElementById("dias").value || 0);
+
+    if (!tipo) {
+
+        document.getElementById("importe_extras").value = "0.00";
+        recalcularTotal();
+        return;
+    }
+
+    const tarifa = await obtenerTarifa("extra", tipo);
+
+    const importe = calcularImporteTarifa(
+        tarifa.precio,
+        tarifa.unidad,
+        dias
+    );
+
+    document.getElementById("importe_extras").value =
+        importe.toFixed(2);
+
+    recalcularTotal();
+}
+
+
+
+async function aplicarCamaras() {
+
+    const marcado = document.getElementById("camaras").checked;
+    const dias = Number(document.getElementById("dias").value || 0);
+
+    if (!marcado) {
+
+        document.getElementById("importe_camaras").value = "0.00";
+        recalcularTotal();
+        return;
+    }
+
+    const tarifa = await obtenerTarifa(
+        "servicio",
+        "Camaras"
+    );
+
+    const importe = calcularImporteTarifa(
+        tarifa.precio,
+        tarifa.unidad,
+        dias
+    );
+
+    document.getElementById("importe_camaras").value =
+        importe.toFixed(2);
+
+    recalcularTotal();
+}
+
+
+async function aplicarPienso() {
+    const marcado = document.getElementById("pienso").checked;
+    const dias = Number(document.getElementById("dias").value || 0);
+
+    if (!marcado) {
+        document.getElementById("importe_pienso").value = "0.00";
+        recalcularTotal();
+        return;
+    }
+
+    const tarifa = await obtenerTarifa("servicio", "Pienso");
+
+    const importe = calcularImporteTarifa(
+        tarifa.precio,
+        tarifa.unidad,
+        dias
+    );
+
+    document.getElementById("importe_pienso").value = importe.toFixed(2);
+
+    recalcularTotal();
+}
+
+
+
+
+
+async function aplicarVeterinario() {
+    const marcado = document.getElementById("veterinario").checked;
+    const dias = Number(document.getElementById("dias").value || 0);
+
+    if (!marcado) {
+        document.getElementById("importe_veterinario").value = "0.00";
+        recalcularTotal();
+        return;
+    }
+
+    const tarifa = await obtenerTarifa("servicio", "Veterinario");
+
+    const importe = calcularImporteTarifa(
+        Number(tarifa.precio || 0),
+        tarifa.unidad,
+        dias
+    );
+
+    document.getElementById("importe_veterinario").value =
+        importe.toFixed(2);
+
+    recalcularTotal();
+}
+
+async function calcularTransporte() {
+    const marcado = document.getElementById("transporte").checked;
+    const kms = Number(document.getElementById("kilometros").value || 0);
+    const precioKmInput = document.getElementById("precioKm");
+
+    if (!marcado) {
+        document.getElementById("importe_transporte").value = "0.00";
+        recalcularTotal();
+        return;
+    }
+
+    if (!precioKmInput.value || Number(precioKmInput.value) === 0) {
+        const tarifa = await obtenerTarifa("servicio", "Transporte");
+
+        precioKmInput.value = Number(tarifa.precio || 0).toFixed(2);
+    }
+
+    const precioKm = Number(precioKmInput.value || 0);
+
+    document.getElementById("importe_transporte").value =
+        (kms * precioKm).toFixed(2);
+
+    recalcularTotal();
+}
+
+
+
+document.addEventListener("DOMContentLoaded", async function () {
+console.log("JS iniciado");
+    const btnPdf = document.getElementById("btnPdf");
+    const form = document.getElementById("formEstancia");
+    const clienteSelect = document.getElementById("cliente");
+    const mascotaSelect = document.getElementById("mascota");
+    const datosCliente = document.getElementById("datos_cliente");
+    const datosMascota = document.getElementById("datos_mascota");
+    const fotoMascota = document.getElementById("foto_mascota");
+    const tablaEstanciasBody = document.querySelector("#tabla_estancias tbody");
+    const habitacionSelect = document.getElementById("habitacion");
+
+
+    const resumenEstanciasCliente = document.getElementById("resumen_estancias_cliente");
+    const otrasMascotas = document.getElementById("otras_mascotas");
+document.getElementById("extras").addEventListener("change", aplicarExtra);
+document.getElementById("camaras").addEventListener("change", aplicarCamaras);
+document.getElementById("pienso").addEventListener("change", aplicarPienso);
+document.getElementById("veterinario").addEventListener("change", aplicarVeterinario);
+document.getElementById("transporte").addEventListener("change", calcularTransporte);
+document.getElementById("kilometros").addEventListener("input", calcularTransporte);
+document.getElementById("precioKm").addEventListener("input", calcularTransporte);
+document.getElementById("tipo_precio_dia").addEventListener("change", aplicarPrecioDia);
+document.getElementById("fecha_entrada").addEventListener("change", actualizarDiasYTotal);
+document.getElementById("fecha_salida").addEventListener("change", actualizarDiasYTotal);
+document.getElementById("hora_salida")
+    .addEventListener("change", actualizarDiasYTotal);
+    async function cargarMascotas(clienteId) {
+    const res = await fetch(`/clientes/${clienteId}/mascotas`);
+    const mascotas = await res.json();
+
+    mascotaSelect.innerHTML = "";
+
+    if (!Array.isArray(mascotas) || mascotas.length === 0) {
+        datosMascota.innerHTML = "<p>Este cliente no tiene mascotas registradas.</p>";
+        fotoMascota.style.display = "none";
+
+        if (otrasMascotas) {
+            otrasMascotas.innerHTML = "";
+        }
+
+        return;
+    }
+
+    mascotas.forEach(m => {
+        const option = document.createElement("option");
+        option.value = m.id;
+        option.textContent = m.nombre;
+        mascotaSelect.appendChild(option);
+    });
+
+    const mascotaActual = form.dataset.mascotaActual;
+
+    if (mascotaActual && mascotas.some(m => String(m.id) === String(mascotaActual))) {
+        mascotaSelect.value = mascotaActual;
+    } else {
+        mascotaSelect.value = mascotas[0].id;
+    }
+
+    await cargarDetalleMascota(mascotaSelect.value);
+
+    pintarOtrasMascotas(
+        mascotas,
+        mascotaSelect.value
+    );
+}
+
+
+    function pintarOtrasMascotas(mascotas, mascotaSeleccionadaId) {
+    if (!otrasMascotas) return;
+
+    otrasMascotas.innerHTML = "";
+
+    mascotas
+        .filter(m => String(m.id) !== String(mascotaSeleccionadaId))
+        .forEach(m => {
+            let foto = m.foto || m.foto_url || "/static/img/default-dog.png";
+
+            foto = foto.replaceAll("\\", "/");
+            if (!foto.startsWith("/")) foto = "/" + foto;
+
+            otrasMascotas.innerHTML += `
+                <div class="pet-card pet-card-secundaria">
+                    <div class="pet-photo">
+                        <img src="${foto}" alt="${m.nombre || ''}">
+                    </div>
+
+                    <div class="pet-info">
+                        <h4>${m.nombre || "-"}</h4>
+                        <p>
+                            ${m.raza || "Sin raza"}
+                            ${m.sexo ? " · " + m.sexo : ""}
+                        </p>
+                    </div>
+                </div>
+            `;
+        });
+}
+
+
+
+
+    async function cargarResumenEstancias(clienteId) {
+    const res = await fetch(`/clientes/${clienteId}/resumen-estancias`);
+    if (!res.ok) return;
+
+    const r = await res.json();
+
+  resumenEstanciasCliente.innerHTML = `
+<table class="tabla-resumen-cliente">
+    <tr>
+        <th>Estancias</th>
+        <th>Total gastado</th>
+        <th>Ticket medio</th>
+        <th>Cliente desde</th>
+        <th>Nivel</th>
+    </tr>
+    <tr>
+        <td>${r.total_estancias}</td>
+        <td>${Number(r.total_gastado).toFixed(2)} €</td>
+        <td>${Number(r.ticket_medio).toFixed(2)} €</td>
+        <td>${r.cliente_desde || "-"}</td>
+        <td>${r.nivel}</td>
+    </tr>
+</table>
+`;
+}
+
+
+
+
+
+    async function cargarDatosCliente(clienteId) {
+        const res = await fetch(`/clientes/${clienteId}/resumen`);
+        if (!res.ok) return;
+
+        const c = await res.json();
+
+        datosCliente.innerHTML = `
+            <div class="dato-linea"><strong>Nombre:</strong> ${c.nombre || ""} ${c.apellidos || ""}</div>
+            <div class="dato-linea"><strong>DNI:</strong> ${c.dni || ""}</div>
+            <div class="dato-linea"><strong>Teléfono:</strong> ${c.telefono || ""}</div>
+            <div class="dato-linea"><strong>Email:</strong> ${c.email || ""}</div>
+            <div class="dato-linea"><strong>Dirección:</strong> ${c.direccion || ""}</div>
+        `;
+    }
+
+function formatearTarifa(valor) {
+    const tarifas = {
+        normal: "Normal",
+        agresivo_perros: "Agresivo Perros",
+        agresivo_personas: "Agresivo Personas",
+        hembra_embarazada: "Hembra Embarazada"
+    };
+
+    return tarifas[valor] || valor || "Normal";
+}
+
+
+
+
+
+    async function cargarUltimasEstancias(clienteId) {
+        const res = await fetch(`/clientes/${clienteId}/ultimas-estancias`);
+        if (!res.ok) return;
+
+        const estancias = await res.json();
+
+        if (!Array.isArray(estancias) || estancias.length === 0) {
+           tablaEstanciasBody.innerHTML = `<tr><td colspan="14">Este cliente no tiene entradas anteriores.</td></tr>`;
+            return;
+        }
+
+        tablaEstanciasBody.innerHTML = "";
+
+        estancias.forEach(e => {
+            console.log(e);
+
+            tablaEstanciasBody.innerHTML += `
+                <tr>
+                    <td>${e.fecha_entrada || ""}</td>
+                    <td>${e.fecha_salida || ""}</td>
+                    <td>${e.habitacion || ""}</td>
+                    <td>${e.mascota || ""}</td>
+                    <td>${formatearTarifa(e.tipo_precio_dia)}</td>
+                    <td>${e.precio_dia || ""}</td>
+                    <td>${e.num_dias || ""}</td>
+                    <td>${e.extras || ""}</td>
+                    <td>${e.camaras ? "Sí" : "No"}</td>
+                    <td>${e.veterinario ? "Sí" : "No"}</td>
+
+                    <td>${e.transporte ? "Sí" : "No"}</td>
+                    <td>${e.total || ""}</td>
+                    <td>${e.pagado ? "Sí" : "No"}</td>
+                    <td>${e.observaciones || ""}</td>
+                </tr>
+            `;
+        });
+    }
+
+async function cargarDetalleMascota(mascotaId) {
+    const res = await fetch(`/mascotas/${mascotaId}/detalle`);
+    if (!res.ok) return;
+
+    const m = await res.json();
+
+    const tipoPrecio = document.getElementById("tipo_precio_dia");
+    const editando = !!form.dataset.estanciaId;
+
+    if (tipoPrecio && !editando) {
+
+        const personas = (m.comportamiento_personas || "").toLowerCase();
+        const perros = (m.comportamiento_perros || "").toLowerCase();
+
+        console.log("Personas:", personas);
+        console.log("Perros:", perros);
+
+        if (personas.includes("agres")) {
+            seleccionarTarifaEstancia("personas");
+
+        } else if (perros.includes("agres")) {
+            seleccionarTarifaEstancia("perros");
+
+        } else {
+            seleccionarTarifaEstancia("normal");
+        }
+
+        await aplicarPrecioDia();
+    }
+
+    datosMascota.innerHTML = `
+        <div class="dato-linea"><strong>Nombre:</strong> ${m.nombre || ""}</div>
+        <div class="dato-linea"><strong>Raza:</strong> ${m.raza || ""}</div>
+        <div class="dato-linea"><strong>Sexo:</strong> ${m.sexo || ""}</div>
+        <div class="dato-linea"><strong>Tamaño:</strong> ${m.tamano || ""}</div>
+        <div class="dato-linea"><strong>Vacunas:</strong> ${m.vacunas || ""}</div>
+        <div class="dato-linea comportamiento"><strong>👤 Personas:</strong> ${m.comportamiento_personas || "-"}</div>
+        <div class="dato-linea comportamiento"><strong>🐕 Perros:</strong> ${m.comportamiento_perros || "-"}</div>
+        <div class="dato-linea"><strong>Observaciones:</strong> ${m.observaciones || ""}</div>
+    `;
+
+    if (m.foto_url) {
+        let rutaFoto = m.foto_url.replaceAll("\\", "/");
+        if (!rutaFoto.startsWith("/")) rutaFoto = "/" + rutaFoto;
+
+        fotoMascota.src = rutaFoto;
+        fotoMascota.style.display = "block";
+    } else {
+        fotoMascota.style.display = "none";
+    }
+}
+
+function seleccionarTarifaEstancia(textoBuscado) {
+    const select = document.getElementById("tipo_precio_dia");
+    const buscado = textoBuscado.toLowerCase();
+
+    for (const option of select.options) {
+        const valor = option.value.toLowerCase();
+
+        if (valor.includes(buscado)) {
+            select.value = option.value;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+
+
+
+    async function cargarHabitaciones() {
+    const fechaEntrada = document.getElementById("fecha_entrada").value;
+
+    const url = fechaEntrada
+        ? `/habitaciones/api/estado?fecha=${fechaEntrada}`
+        : "/habitaciones/api/estado";
+
+    const res = await fetch(url);
+    if (!res.ok) return;
+
+    const habitaciones = await res.json();
+    habitacionSelect.innerHTML = "";
+
+    const vacia = document.createElement("option");
+    vacia.value = "";
+    vacia.textContent = "Selecciona habitación";
+    habitacionSelect.appendChild(vacia);
+
+    habitaciones.forEach(h => {
+        const option = document.createElement("option");
+        option.value = h.nombre;
+        option.textContent = `${h.nombre} · ${h.grupo} · ${h.estado}`;
+        option.dataset.estado = h.estado;
+
+        if (h.estado === "ocupada") {
+            option.style.color = "#dc2626";
+        }
+
+        if (h.estado === "compartida") {
+            option.style.color = "#f59e0b";
+        }
+
+        habitacionSelect.appendChild(option);
+    });
+
+    const habitacionActual = form.dataset.habitacionActual;
+    if (habitacionActual) {
+        habitacionSelect.value = habitacionActual;
+    }
+}
+
+    clienteSelect.addEventListener("change", async function () {
+        const clienteId = this.value;
+        await cargarMascotas(clienteId);
+        await cargarDatosCliente(clienteId);
+        await cargarUltimasEstancias(clienteId);
+        await cargarResumenEstancias(clienteId);
+    });
+
+   mascotaSelect.addEventListener("change", async function () {
+
+    const mascotaId = this.value;
+
+    if (!mascotaId) {
+        datosMascota.innerHTML = "";
+        fotoMascota.style.display = "none";
+        if (otrasMascotas) otrasMascotas.innerHTML = "";
+        return;
+    }
+
+    await cargarDetalleMascota(mascotaId);
+
+
+    const clienteId = clienteSelect.value;
+    if (!clienteId) return;
+
+    const res = await fetch(`/clientes/${clienteId}/mascotas`);
+    const mascotas = await res.json();
+
+    pintarOtrasMascotas(mascotas, mascotaId);
+
+});
+
+    habitacionSelect.addEventListener("change", function () {
+        const option = this.options[this.selectedIndex];
+        const estado = option.dataset.estado;
+
+        if (estado === "ocupada") {
+            const compartir = confirm("Esta habitación está ocupada.\n¿Compartir habitación?");
+            if (!compartir) this.value = "";
+        }
+    });
+
+    document.getElementById("fecha_entrada").addEventListener("change", async function () {
+    await actualizarDiasYTotal();
+    console.log("Voy a cargar habitaciones");
+    await cargarHabitaciones();
+
+});
+    document.getElementById("fecha_salida").addEventListener("change", actualizarDiasYTotal);
+    document.getElementById("tipo_precio_dia").addEventListener("change", aplicarPrecioDia);
+
+    form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const data = {
+            cliente_id: parseInt(form.cliente_id.value),
+            mascota_id: parseInt(form.mascota_id.value),
+            fecha_entrada: form.fecha_entrada.value,
+            hora_entrada: form.hora_entrada.value || null,
+            fecha_salida: form.fecha_salida.value,
+            hora_salida: form.hora_salida.value || null,
+            habitacion: form.habitacion.value || null,
+            tipo_precio_dia: form.tipo_precio_dia.value,
+            precio_dia: form.precio_dia.value || "0.00",
+            num_dias: parseInt(document.getElementById("dias").value || 0),
+            extras: form.extras.value || null,
+            importe_extras: form.importe_extras.value || "0.00",
+            camaras: form.camaras.checked,
+            importe_camaras: form.importe_camaras.value || "0.00",
+            transporte: form.transporte.checked,
+            kilometros: parseFloat(document.getElementById("kilometros").value || 0),
+            importe_transporte: form.importe_transporte.value || "0.00",
+            veterinario: form.veterinario.checked,
+            importe_veterinario: form.importe_veterinario.value || "0.00",
+            pienso: form.pienso.checked,
+            importe_pienso: form.importe_pienso.value || "0.00",
+            total: document.getElementById("total_estimado").value.replace(" €", ""),
+            pagado: form.pagado.checked,
+            observaciones: form.observaciones.value || null
+        };
+
+        const estanciaId = form.dataset.estanciaId;
+        const editando = !!estanciaId;
+
+        const url = editando ? `/estancias/${estanciaId}/editar` : "/estancias/";
+const metodo = "POST";
+
+        const res = await fetch(url, {
+            method: metodo,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+if (!res.ok) {
+    alert("⚠️ " + result.detail);
+    return;
+}
+
+        ultimaEstanciaId = result.id;
+
+        alert(editando ? `Estancia actualizada` : `Estancia creada`);
+
+ if (!editando) {
+
+    form.reset();
+
+    document.getElementById("dias").value = "";
+    document.getElementById("total_estimado").value = "";
+
+    datosCliente.innerHTML = "";
+    datosMascota.innerHTML = "";
+
+    fotoMascota.style.display = "none";
+
+    mascotaSelect.innerHTML = "";
+
+    tablaEstanciasBody.innerHTML = "";
+
+    ultimaEstanciaId = result.id;
+
+    await cargarHabitaciones();
+
+    if (otrasMascotas) {
+    otrasMascotas.innerHTML = "";
+}
+
+if (resumenEstanciasCliente) {
+    resumenEstanciasCliente.innerHTML = `
+        <table class="tabla-resumen-cliente">
+            <tr>
+                <th>Estancias</th>
+                <th>Total gastado</th>
+                <th>Ticket medio</th>
+                <th>Cliente desde</th>
+                <th>Nivel</th>
+            </tr>
+            <tr>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        </table>
+    `;
+    datosCliente.innerHTML = "<p>Selecciona un cliente para ver sus datos.</p>";
+datosMascota.innerHTML = "<p>Selecciona una mascota para ver sus datos.</p>";
+}
+}
+ });
+if (btnPdf) {
+
+    btnPdf.addEventListener("click", function () {
+
+        const estanciaId =
+            form.dataset.estanciaId || ultimaEstanciaId;
+
+        if (!estanciaId) {
+            alert("Primero guarda la estancia.");
+            return;
+        }
+
+        window.open(
+            `/estancias/${estanciaId}/pdf`,
+            "_blank"
+        );
+
+    });
+
+}
+
+
+
+await cargarHabitaciones();
+
+if (clienteSelect.value) {
+    console.log("Cliente seleccionado al cargar:", clienteSelect.value);
+    await cargarMascotas(clienteSelect.value);
+    await cargarDatosCliente(clienteSelect.value);
+    await cargarUltimasEstancias(clienteSelect.value);
+    await cargarResumenEstancias(clienteSelect.value);
+}
+
+if (!form.dataset.estanciaId) {
+    await actualizarDiasYTotal();
+} else {
+    recalcularTotal();
+}
+});
+
+
+
+</script>
+<style>
+.tabla-resumen-cliente {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+.tabla-resumen-cliente th {
+    background: #f3f4f6;
+    padding: 8px;
+    text-align: center;
+}
+.tabla-resumen-cliente td {
+    padding: 10px;
+    text-align: center;
+    font-weight: 600;
+    border: 1px solid #e5e7eb;
+}
+
+.pet-card-secundaria {
+    opacity: 0.35;
+    transform: scale(0.96);
+    transition: all 0.2s ease;
+}
+
+.pet-card-secundaria:hover {
+    opacity: 0.75;
+    transform: scale(1);
+}
+
+.pet-card-secundaria .pet-photo img {
+    filter: grayscale(60%);
+}
+
+
+.mascota-layout {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    column-gap: 35px;
+    align-items: start;
+}
+.pet-card-secundaria .pet-photo img {
+    width: 220px;
+    height: 220px;
+    object-fit: contain;
+}
+.pet-card-secundaria{
+    text-align:center;
+}
+
+.pet-card-secundaria h4,
+.pet-card-secundaria p{
+    text-align:center;
+}
+.mascotas-secundarias-box {
+    display: block;
+}
+
+.otras-mascotas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: flex-start;
+}
+
+.pet-card-secundaria {
+    width: 160px;
+    text-align: center;
+    opacity: 0.35;
+    transition: all 0.2s ease;
+}
+
+.pet-card-secundaria:hover {
+    opacity: 0.75;
+    transform: scale(1.03);
+}
+
+.pet-card-secundaria .pet-photo img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    object-position: top center;
+    border-radius: 10px;
+    filter: grayscale(60%);
+}
+.dato-linea {
+    display: flex;
+    gap: 12px;
+}
+.comportamiento {
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+</style>
+
+
+
+</body>
+</html>

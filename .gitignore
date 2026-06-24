@@ -216,3 +216,29 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# GestorCan
+
+gestorcan_local.db
+*.db
+
+media/
+
+facturas_pdf/
+pdf/
+exports/
+
+uploads/
+temp/
+
+FICHEROS_AEAT/
+storage/xml/
+storage/signed/
+storage/qr/
+
+certificados/
+*.pfx
+*.p12
+*.pem
+*.crt
+
+.idea/

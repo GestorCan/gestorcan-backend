@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Planning Habitaciones</title>
+
+    <style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 25px;
+        background: #0f172a;
+        color: #f1f5f9;
+        font-family: Inter, Arial, sans-serif;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+        font-size: 34px;
+        font-weight: 700;
+    }
+
+    .planning {
+        background: #111827;
+        border-radius: 18px;
+        padding: 20px;
+        overflow-x: auto;
+
+        box-shadow:
+            0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    table {
+        border-collapse: separate;
+        border-spacing: 4px;
+        min-width: 1400px;
+        width: 100%;
+    }
+
+    th {
+        background: #1e293b;
+        color: #f8fafc;
+
+        padding: 14px;
+        border-radius: 10px;
+
+        font-size: 14px;
+        font-weight: 700;
+
+        position: sticky;
+        top: 0;
+        z-index: 5;
+    }
+
+    td {
+        text-align: center;
+        padding: 0;
+        border: none;
+    }
+
+    .habitacion {
+        background: #1e293b;
+        color: white;
+
+        min-width: 120px;
+
+        border-radius: 12px;
+
+        font-weight: bold;
+        font-size: 15px;
+
+        position: sticky;
+        left: 0;
+        z-index: 4;
+    }
+
+    .habitacion small {
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .bloque {
+        height: 58px;
+
+        border-radius: 12px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        transition: all 0.2s ease;
+
+        cursor: pointer;
+
+        font-weight: bold;
+    }
+
+    .bloque:hover {
+        transform: scale(1.04);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    .libre .bloque {
+        background: #1e3a2f;
+        color: #4ade80;
+    }
+
+    .parcial .bloque {
+        background: #3b2f1e;
+        color: #fbbf24;
+    }
+
+    .ocupada .bloque {
+        background: #3b1e1e;
+        color: #f87171;
+    }
+
+    .cabecera-hoy {
+        background: #2563eb !important;
+    }
+
+    .leyenda {
+        display: flex;
+        gap: 18px;
+        margin-bottom: 18px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .leyenda-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+    }
+
+    .leyenda-color {
+        width: 18px;
+        height: 18px;
+        border-radius: 6px;
+    }
+
+    .verde {
+        background: #4ade80;
+    }
+
+    .amarillo {
+        background: #fbbf24;
+    }
+
+    .rojo {
+        background: #f87171;
+    }
+
+</style>
+</head>
+
+<body>
+
+<h1>Planning Habitaciones</h1>
+
+<div class="leyenda">
+
+    <div class="leyenda-item">
+        <div class="leyenda-color verde"></div>
+        Libre
+    </div>
+
+    <div class="leyenda-item">
+        <div class="leyenda-color amarillo"></div>
+        Parcial
+    </div>
+
+    <div class="leyenda-item">
+        <div class="leyenda-color rojo"></div>
+        Ocupada
+    </div>
+
+</div>
+
+<div class="planning">
+    <table id="tablaPlanning"></table>
+</div>
+
+<script>
+async function cargarPlanning() {
+    const response = await fetch("/habitaciones/planning?residencia_id=1&dias=15");
+    const data = await response.json();
+
+    const tabla = document.getElementById("tablaPlanning");
+    tabla.innerHTML = "";
+
+    if (!data.planning || data.planning.length === 0) {
+        tabla.innerHTML = "<tr><td>No hay habitaciones</td></tr>";
+        return;
+    }
+
+    const fechas = data.planning[0].dias.map(d => d.fecha);
+
+    let html = "<thead><tr>";
+    html += "<th>Habitación</th>";
+
+    fechas.forEach(fecha => {
+        const dia = fecha.slice(8, 10);
+        const mes = fecha.slice(5, 7);
+        const hoy = new Date().toISOString().slice(0,10);
+
+const claseHoy = fecha === hoy
+    ? "cabecera-hoy"
+    : "";
+
+html += `
+    <th class="${claseHoy}">
+        ${dia}/${mes}
+    </th>
+`;
+    });
+
+    html += "</tr></thead><tbody>";
+
+    data.planning.forEach(fila => {
+        html += `<tr>`;
+        html += `<td class="habitacion">${fila.habitacion}<br><small>${fila.grupo}</small></td>`;
+
+        fila.dias.forEach(dia => {
+            let simbolo = "·";
+
+            if (dia.estado === "libre") simbolo = "□";
+            if (dia.estado === "parcial") simbolo = "◐";
+            if (dia.estado === "ocupada") simbolo = "■";
+
+            html += `
+                <td class="${dia.estado}">
+                    <div class="bloque">
+                        ${simbolo}<br>
+                        <small>${dia.ocupadas}/${dia.capacidad}</small>
+                    </div>
+                </td>
+            `;
+        });
+
+        html += `</tr>`;
+    });
+
+    html += "</tbody>";
+    tabla.innerHTML = html;
+}
+
+cargarPlanning();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,389 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">GASTOS</span>
+        <h1>Editar gasto</h1>
+<p>Modificación de ticket o factura recibida.</p>
+    </div>
+</section>
+
+<section class="panel gasto-form-panel">
+
+    <form method="post" enctype="multipart/form-data">
+
+        <div class="form-header">
+            <h2>Datos del gasto</h2>
+            <a href="/gastos" class="btn-secondary">Volver</a>
+        </div>
+
+        <div class="document-switch">
+            <label>
+                <input type="radio"
+       name="tipo_documento"
+       value="ticket"
+       {% if gasto.tipo_documento == "ticket" %}checked{% endif %}
+       onchange="mostrarCamposFactura()">
+                Ticket
+            </label>
+
+            <label>
+                <input type="radio"
+       name="tipo_documento"
+       value="factura"
+       {% if gasto.tipo_documento == "factura" %}checked{% endif %}
+       onchange="mostrarCamposFactura()">
+                Factura
+            </label>
+        </div>
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label>Fecha <span class="required">*</span></label>
+<input type="date"
+       name="fecha"
+       value="{{ gasto.fecha }}"
+       required>
+            </div>
+
+
+
+
+           <div class="form-group">
+    <label>Proveedor</label>
+
+    <input list="proveedores-list"
+       id="proveedor"
+       name="proveedor"
+       value="{{ gasto.proveedor }}"
+       required>
+
+    <datalist id="proveedores-list">
+        {% for p in proveedores %}
+            <option value="{{ p.nombre }}">
+        {% endfor %}
+    </datalist>
+</div>
+
+
+
+     <div class="form-group">
+    <label>Tipo de gasto</label>
+
+    <select name="tipo_gasto"
+            id="tipo_gasto"
+            required>
+
+        {% for tipo in tipos_gasto %}
+        <option value="{{ tipo.nombre }}"
+                data-iva="{{ tipo.iva_defecto or 21 }}"
+                {% if tipo.nombre == gasto.tipo_gasto %}selected{% endif %}>
+            {{ tipo.nombre }}
+        </option>
+        {% endfor %}
+
+    </select>
+</div>
+
+            <div class="form-group">
+               <label id="label_importe">
+    {% if gasto.tipo_documento == "factura" %}
+        Total factura
+    {% else %}
+        Importe ticket
+    {% endif %}
+</label>
+<input type="number"
+       step="0.01"
+       name="importe"
+       id="importe"
+       value="{{ gasto.total_factura if gasto.tipo_documento == 'factura' else gasto.importe }}">
+            </div>
+
+        </div>
+
+        <div id="campos_factura" class="factura-box"
+     {% if gasto.tipo_documento == "factura" %}
+        style="display:block;"
+     {% else %}
+        style="display:none;"
+     {% endif %}>
+
+            <h3>Datos fiscales de factura</h3>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Nº factura</label>
+                    <input type="text"
+       name="numero_factura"
+       value="{{ gasto.numero_factura or '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label>Concepto</label>
+                    <input type="text"
+       name="concepto"
+       value="{{ gasto.concepto or '' }}">
+                </div>
+
+                <div class="form-group">
+                    <label>Base imponible</label>
+                    <input type="number"
+       step="0.01"
+       name="base_imponible"
+       id="base_imponible"
+       value="{{ gasto.base_imponible or 0 }}">
+                </div>
+
+                <div class="form-group">
+                    <label>% IVA</label>
+                    <input type="number"
+       step="0.01"
+       name="porcentaje_iva"
+       id="porcentaje_iva"
+       value="{{ gasto.porcentaje_iva or 21 }}">
+                </div>
+
+                <div class="form-group">
+                    <label>Importe IVA</label>
+                    <input type="number"
+       step="0.01"
+       name="importe_iva"
+       id="importe_iva"
+       value="{{ gasto.importe_iva or 0 }}"
+       readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>% Retención</label>
+                    <input type="number"
+       step="0.01"
+       name="porcentaje_retencion"
+       id="porcentaje_retencion"
+       value="{{ gasto.porcentaje_retencion or 0 }}">
+                </div>
+
+                <div class="form-group">
+                    <label>Importe retención</label>
+                    <input type="number"
+       step="0.01"
+       name="importe_retencion"
+       id="importe_retencion"
+       value="{{ gasto.importe_retencion or 0 }}"
+       readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Total factura</label>
+                    <input type="number"
+       step="0.01"
+       name="total_factura"
+       id="total_factura"
+       value="{{ gasto.total_factura or 0 }}"
+       readonly>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="file-box">
+            <label>Foto / PDF del documento</label>
+            <input type="file" name="archivo">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">
+                Guardar gasto
+            </button>
+
+            <a href="/gastos" class="btn-secondary">
+                Cancelar
+            </a>
+        </div>
+
+    </form>
+
+</section>
+
+<script>
+const proveedoresData = {{ proveedores_json | safe }};
+
+function mostrarCamposFactura(recalcular = true) {
+    const seleccionado = document.querySelector('input[name="tipo_documento"]:checked');
+    const bloque = document.getElementById("campos_factura");
+    const labelImporte = document.getElementById("label_importe");
+
+    if (!seleccionado || !bloque) return;
+
+    if (seleccionado.value === "factura") {
+        bloque.style.display = "block";
+        if (labelImporte) labelImporte.textContent = "Total factura";
+        if (recalcular) recalcularFactura();
+    } else {
+        bloque.style.display = "none";
+        if (labelImporte) labelImporte.textContent = "Importe ticket";
+    }
+}
+
+function recalcularFactura() {
+    const total = parseFloat(document.getElementById("importe")?.value || 0);
+    const ivaPorcentaje = parseFloat(document.getElementById("porcentaje_iva")?.value || 0);
+    const retencionPorcentaje = parseFloat(document.getElementById("porcentaje_retencion")?.value || 0);
+
+    const divisor = 1 + (ivaPorcentaje / 100) - (retencionPorcentaje / 100);
+
+    if (divisor <= 0 || total <= 0) return;
+
+    const base = total / divisor;
+    const iva = base * ivaPorcentaje / 100;
+    const retencion = base * retencionPorcentaje / 100;
+
+    document.getElementById("base_imponible").value = base.toFixed(2);
+    document.getElementById("importe_iva").value = iva.toFixed(2);
+    document.getElementById("importe_retencion").value = retencion.toFixed(2);
+    document.getElementById("total_factura").value = total.toFixed(2);
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    mostrarCamposFactura(false);
+
+    document.querySelectorAll('input[name="tipo_documento"]').forEach(function (radio) {
+        radio.addEventListener("change", function () {
+            mostrarCamposFactura(true);
+        });
+    });
+
+    ["importe", "porcentaje_iva", "porcentaje_retencion"].forEach(function(id) {
+        const campo = document.getElementById(id);
+        if (campo) {
+            campo.addEventListener("input", recalcularFactura);
+            campo.addEventListener("change", recalcularFactura);
+        }
+    });
+});
+</script>
+
+<style>
+.gasto-form-panel {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.form-header h2 {
+    margin: 0;
+}
+
+.document-switch {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.document-switch label {
+    padding: 0.75rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    cursor: pointer;
+    background: #f9fafb;
+    font-weight: 700;
+}
+
+.document-switch input {
+    margin-right: 0.5rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.form-group label,
+.file-box label {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #374151;
+}
+
+.form-group input,
+.file-box input {
+    padding: 0.75rem 0.85rem;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    font-size: 0.95rem;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+.factura-box {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    background: #f9fafb;
+}
+
+.factura-box h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.file-box {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.form-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+}
+
+@media (max-width: 800px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}
+ .required {
+    color: #dc2626;
+}
+ .form-group input,
+.form-group select,
+.file-box input {
+    padding: 0.75rem 0.85rem;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    font-size: 0.95rem;
+}
+</style>
+
+{% endblock %}

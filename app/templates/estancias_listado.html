@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Estancias - GestorCan</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+
+
+
+
+
+
+</head>
+<body>
+<div class="dashboard-container">
+
+    <section class="hero">
+        <div>
+            <span class="eyebrow">Estancias</span>
+            <h2>Gestión de estancias</h2>
+            <p>Entradas, salidas y ocupación.</p>
+        </div>
+        <a href="/" class="btn-secondary">
+        Volver al dashboard
+    </a>
+
+        <a href="/estancias/form"
+   class="primary-button">
+    + Nueva estancia
+</a>
+    </section>
+
+
+
+    <div class="card">
+
+
+<div class="filtros-facturacion">
+    <a href="/estancias/listado?limit={{ limit }}" class="btn-filtro btn-todas">
+    ☰ Todas
+</a>
+
+<a href="/estancias/listado?facturado=1&limit={{ limit }}" class="btn-filtro btn-facturadas">
+    ✓ Facturadas
+</a>
+
+<a href="/estancias/listado?facturado=0&limit={{ limit }}" class="btn-filtro btn-no-facturadas">
+    ⛔ No facturadas
+</a>
+</div>
+
+
+
+
+ <div class="listado-toolbar">
+
+    <form method="get" action="/estancias/listado" style="display:flex; gap:10px; flex:1;">
+
+        <input
+            type="text"
+            name="buscar"
+            value="{{ buscar }}"
+            placeholder="Buscar por Cliente, Mascota, DNI."
+            class="input-buscador"
+        >
+
+        {% if facturado %}
+            <input type="hidden" name="facturado" value="{{ facturado }}">
+        {% endif %}
+
+        <input type="hidden" name="limit" value="{{ limit }}">
+
+        <button type="submit" class="btn-secondary">
+            Buscar
+        </button>
+
+        <a href="/estancias/listado"
+           class="btn-secondary">
+            Limpiar
+        </a>
+
+    </form>
+
+    <div class="toolbar-actions">
+        <a href="/estancias/exportar-excel" class="btn-secondary">Excel</a>
+        <a href="/estancias/exportar-pdf" class="btn-secondary">PDF</a>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+       <div class="paginacion">
+    {% if page > 1 %}
+        <a class="btn-secondary"
+           href="/estancias/listado?page={{ page - 1 }}&limit={{ limit }}{% if facturado %}&facturado={{ facturado }}{% endif %}">
+            ← Anterior
+        </a>
+    {% endif %}
+
+    <span>
+        Página {{ page }} de {{ total_pages }} · {{ total }} estancias
+    </span>
+
+    {% if page < total_pages %}
+        <a class="btn-secondary"
+           href="/estancias/listado?page={{ page + 1 }}&limit={{ limit }}{% if facturado %}&facturado={{ facturado }}{% endif %}">
+            Siguiente →
+        </a>
+    {% endif %}
+</div>
+
+
+
+
+    </div><div class="tabla-scroll">
+   <table class="tabla-estancias tabla-compacta" id="tablaEstancias">
+        <thead>
+            <tr>
+                <th>Albarán</th>
+                <th>Cliente</th>
+                <th>DNI Cliente</th>
+                <th>Entrada</th>
+                <th>Hora Salida</th>
+                <th>Salida</th>
+                <th>Habitación</th>
+                <th>Observaciones</th>
+                <th>Mascota</th>
+                <th>Tarifa</th>
+                <th>Precio Día</th>
+                <th>Nº Días</th>
+                <th>Extras</th>
+                <th>Impt. Extras</th>
+                <th>Cámaras</th>
+                <th>Veterinario</th>
+                <th>Transporte</th>
+                <th>Kilómetros</th>
+                <th>Total</th>
+                <th>Pagado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for estancia in estancias %}
+
+            <tr
+    class="{% if estancia.facturado %} fila-facturada {% else %} fila-no-facturada {% endif %}"
+    ondblclick="window.location.href='/estancias/{{ estancia.id }}/editar'"
+>
+
+                <td>{{ estancia.id }}</td>
+
+                <td>
+                    {{ estancia.cliente.nombre }} {{ estancia.cliente.apellidos if estancia.cliente else "-" }}
+                </td>
+
+                <td>
+                    {{ estancia.cliente.dni if estancia.cliente else "-" }}
+                </td>
+
+                <td>{{ estancia.fecha_entrada }}</td>
+
+                <td>{{ estancia.hora_salida or "-" }}</td>
+
+                <td>{{ estancia.fecha_salida }}</td>
+
+                <td>{{ estancia.habitacion or "-" }}</td>
+
+                <td class="col-observaciones">
+                    {{ estancia.observaciones or "" }}
+                </td>
+
+                <td>
+    {{ estancia.mascota.nombre if estancia.mascota else "-" }}
+</td>
+
+<td>
+    {% if estancia.tipo_precio_dia == "normal" %}
+        Normal
+    {% elif estancia.tipo_precio_dia == "agresivo_perros" %}
+        Agresivo Perros
+    {% elif estancia.tipo_precio_dia == "agresivo_personas" %}
+        Agresivo Personas
+    {% elif estancia.tipo_precio_dia == "hembra_embarazada" %}
+        Hembra Embarazada
+    {% else %}
+        {{ estancia.tipo_precio_dia or "-" }}
+    {% endif %}
+</td>
+
+<td>{{ "%.2f"|format(estancia.precio_dia or 0) }}</td>
+
+                <td>{{ estancia.num_dias or 0 }}</td>
+
+                <td>{{ estancia.extras or "Sin extras" }}</td>
+
+                <td>{{ "%.2f"|format(estancia.importe_extras or 0) }}</td>
+
+                <td>{{ "Sí" if estancia.camaras else "No" }}</td>
+
+<td>{{ "Sí" if estancia.veterinario else "No" }}</td>
+
+                <td>{{ "%.2f"|format(estancia.importe_transporte or 0) }}</td>
+
+                <td>{{ estancia.kilometros or 0 }}</td>
+
+                <td class="total-cell">
+                    {{ "%.2f"|format(estancia.total or 0) }}
+                </td>
+
+                <td>
+                    {% if estancia.pagado %}
+                        <span class="badge badge-pagado">Sí</span>
+                    {% else %}
+                        <span class="badge badge-pendiente">No</span>
+                    {% endif %}
+                </td>
+
+
+
+              <td class="acciones">
+
+   {% if not estancia.facturado %}
+
+    <a href="/estancias/{{ estancia.id }}/factura-preview"
+       class="btn-warning btn-small">
+
+        Facturar
+
+    </a>
+
+{% else %}
+
+    <a href="/facturas/estancia/{{ estancia.id }}/pdf"
+       class="btn-secondary btn-small"
+       target="_blank">
+
+        Factura
+
+    </a>
+
+{% endif %}
+
+{% if not estancia.pagado %}
+
+    <form method="post"
+          action="/estancias/{{ estancia.id }}/marcar-pagado-listado"
+          class="form-inline">
+
+        <button type="submit"
+                class="btn-primary btn-small">
+
+            Cobrar
+
+        </button>
+
+    </form>
+
+{% endif %}
+
+<a href="/albaranes/{{ estancia.id }}/pdf"
+   class="btn-secondary btn-small"
+   target="_blank">
+
+    Albarán
+
+</a>
+
+</td>
+
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById("buscadorEstancias");
+    const tabla = document.getElementById("tablaEstancias");
+    const filas = tabla.querySelectorAll("tbody tr");
+    const headers = tabla.querySelectorAll("thead th");
+
+
+
+    headers.forEach((header, index) => {
+        header.style.cursor = "pointer";
+
+        header.addEventListener("click", function () {
+            const tbody = tabla.querySelector("tbody");
+            const filasArray = Array.from(tbody.querySelectorAll("tr"));
+            const ascendente = !header.classList.contains("asc");
+
+            headers.forEach(h => h.classList.remove("asc", "desc"));
+            header.classList.add(ascendente ? "asc" : "desc");
+
+            filasArray.sort((a, b) => {
+                const valorA = a.children[index]?.innerText.trim().toLowerCase() || "";
+                const valorB = b.children[index]?.innerText.trim().toLowerCase() || "";
+
+                const numA = parseFloat(valorA.replace(",", "."));
+                const numB = parseFloat(valorB.replace(",", "."));
+
+                if (!isNaN(numA) && !isNaN(numB)) {
+                    return ascendente ? numA - numB : numB - numA;
+                }
+
+                return ascendente
+                    ? valorA.localeCompare(valorB)
+                    : valorB.localeCompare(valorA);
+            });
+
+            filasArray.forEach(fila => tbody.appendChild(fila));
+        });
+    });
+});
+
+</script>
+<style>
+<style>
+.filtros-facturacion {
+    display: flex;
+    gap: 18px;
+    margin: 24px 0;
+    align-items: center;
+}
+
+.btn-filtro {
+    padding: 12px 22px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+    background: #fff;
+    border: 2px solid #ddd;
+}
+
+.btn-todas {
+    color: #6f42c1;
+    border-color: #6f42c1;
+}
+
+.btn-facturadas {
+    color: #198754;
+    border-color: #198754;
+}
+
+.btn-no-facturadas {
+    color: #fd7e14;
+    border-color: #fd7e14;
+}
+
+.btn-filtro:hover {
+    background: #f8f9fa;
+    transform: translateY(-1px);
+}
+
+</style>
+
+
+
+
+</body>
+</html>

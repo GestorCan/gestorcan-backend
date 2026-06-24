@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">Facturación</span>
+        <h2>Albaranes</h2>
+        <p>Listado y control de albaranes generados.</p>
+    </div>
+</section>
+
+<section class="panel">
+
+    <div class="table-header">
+
+        <div>
+            <h3>Listado de albaranes</h3>
+            <p>Consulta y visualización de PDFs</p>
+        </div>
+
+    </div>
+
+    <div class="filters">
+
+        <input type="text" id="filtroCliente" placeholder="Cliente">
+
+        <input type="date" id="filtroFecha">
+
+        <button class="primary-button" onclick="cargar()">
+            Filtrar
+        </button>
+
+    </div>
+
+    <div class="table-wrap">
+
+        <table class="tarifas-table">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Mascota</th>
+                    <th>Entrada</th>
+                    <th>Salida</th>
+                    <th>Total</th>
+                    <th>PDF</th>
+                </tr>
+            </thead>
+
+            <tbody id="tabla"></tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+<script>
+
+const API = "http://127.0.0.1:8000";
+
+async function cargar() {
+
+    const cliente = document.getElementById("filtroCliente").value;
+    const fecha = document.getElementById("filtroFecha").value;
+
+    let url = `${API}/albaranes/`;
+
+    const params = new URLSearchParams();
+
+    if (cliente) params.append("cliente", cliente);
+    if (fecha) params.append("fecha", fecha);
+
+    if (params.toString()) {
+        url += `?${params.toString()}`;
+    }
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    const tabla = document.getElementById("tabla");
+
+    tabla.innerHTML = "";
+
+    data.forEach(a => {
+
+        const fila = document.createElement("tr");
+
+        fila.innerHTML = `
+            <td>${a.id}</td>
+            <td>${a.cliente}</td>
+            <td>${a.mascota}</td>
+            <td>${a.fecha_entrada}</td>
+            <td>${a.fecha_salida}</td>
+            <td>${a.total}€</td>
+            <td>
+                <button class="secondary-button"
+                    onclick="verPDF(${a.id})">
+                    PDF
+                </button>
+            </td>
+        `;
+
+        tabla.appendChild(fila);
+    });
+}
+
+function verPDF(id) {
+    window.open(`${API}/albaranes/${id}/pdf`, "_blank");
+}
+
+window.onload = cargar;
+
+</script>
+
+{% endblock %}

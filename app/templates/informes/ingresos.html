@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">Analytics</span>
+        <h2>Ingresos mensuales</h2>
+        <p>Evolución mensual de ingresos del centro.</p>
+    </div>
+</section>
+
+<section class="panel">
+
+    <div class="chart-card">
+
+        <h3>Facturación mensual</h3>
+
+        <canvas id="ingresosChart"></canvas>
+
+    </div>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+async function cargarGraficaIngresos() {
+
+    const response = await fetch("/api/ingresos-mensuales");
+
+    const data = await response.json();
+
+    const labels = data.map(x => x.mes);
+
+    const valores = data.map(x => x.total);
+
+    const ctx = document.getElementById("ingresosChart");
+
+    new Chart(ctx, {
+
+        type: "bar",
+
+        data: {
+
+            labels: labels,
+
+            datasets: [{
+                label: "Ingresos €",
+                data: valores,
+                backgroundColor: "#3b82f6",
+                borderRadius: 8
+            }]
+        },
+
+        options: {
+
+            responsive: true,
+
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+
+cargarGraficaIngresos();
+
+</script>
+
+{% endblock %}

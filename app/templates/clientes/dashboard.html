@@ -1,0 +1,320 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">Clientes</span>
+        <h2>Gestión de clientes</h2>
+        <p>Listado de propietarios registrados en GestorCan.</p>
+    </div>
+
+    <a href="/dashboard/clientes/nuevo" class="primary-button">
+        + Nuevo cliente
+    </a>
+</section>
+
+<section class="panel">
+
+    <div class="table-header">
+        <div>
+            <h3>Clientes registrados</h3>
+            <p>Propietarios dados de alta en GestorCan.</p>
+        </div>
+    </div>
+<div class="listado-toolbar">
+
+    <form method="get" action="/dashboard/clientes" style="display:flex; gap:10px; width:100%;">
+
+        <input
+            type="text"
+            name="buscar"
+            value="{{ buscar }}"
+            class="input-buscador"
+            placeholder="Buscar cliente, DNI, teléfono, email..."
+        >
+
+
+
+        <button type="submit" class="btn-secondary">
+            Buscar
+        </button>
+
+        <a href="/dashboard/clientes"
+           class="btn-secondary">
+            Limpiar
+        </a>
+
+    </form>
+
+</div>
+    <div class="table-wrap table-scroll">
+
+        <table
+            class="verifactu-table sortable-table"
+            id="clientesTable"
+        >
+
+            <thead>
+                <tr>
+
+                    <th data-sort="number">
+                        ID
+                    </th>
+
+                    <th data-sort="text">
+                        Cliente
+                    </th>
+
+                    <th data-sort="text">
+                        DOCUMENTO
+                    </th>
+
+                    <th data-sort="text">
+                        Teléfono
+                    </th>
+
+                    <th data-sort="text">
+                        Email
+                    </th>
+
+                    <th data-sort="text">
+                        Población
+                    </th>
+
+                    <th>Mascotas</th>
+
+                    <th>
+                        Acciones
+                    </th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for c in clientes %}
+
+                <tr>
+
+                    <td>
+                        #{{ c.id }}
+                    </td>
+
+                    <td>
+                        <strong>
+                            {{ c.nombre or "-" }}
+                            {{ c.apellidos or "" }}
+                        </strong>
+                    </td>
+
+                    <td>
+    {% if c.dni %}
+        <strong>{{ c.tipo_documento or "NIF" }}</strong>
+        {{ c.dni }}
+    {% else %}
+        -
+    {% endif %}
+</td>
+
+                    <td>
+                        {{ c.telefono or "-" }}
+                    </td>
+
+                    <td>
+                        {{ c.email or "-" }}
+                    </td>
+
+                    <td>
+                        {{ c.poblacion or "-" }}
+                    </td>
+
+                    <td>
+                        {% if c.mascotas %}
+                            {% for m in c.mascotas %}
+                                <span class="vf-badge vf-firmado">{{ m.nombre }}</span>
+                            {% endfor %}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+
+                        <div class="vf-actions">
+
+                            <a
+                                class="vf-button secondary"
+                                href="/dashboard/clientes/{{ c.id }}/editar"
+                            >
+                                Editar
+                            </a>
+
+                            <form
+                                method="post"
+                                action="/dashboard/clientes/{{ c.id }}/eliminar"
+                            >
+
+                                <button
+                                    class="vf-button danger"
+                                    type="submit"
+                                    onclick="return confirm('¿Eliminar este cliente?');"
+                                >
+
+                                    Eliminar
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+        {% if page is defined and total_pages is defined %}
+<div class="paginacion">
+
+    {% if page > 1 %}
+        <a class="btn-secondary"
+           href="/dashboard/clientes?page={{ page - 1 }}&limit={{ limit }}{% if buscar %}&buscar={{ buscar }}{% endif %}">
+            ← Anterior
+        </a>
+    {% endif %}
+
+    <span>
+        Página {{ page }} de {{ total_pages }}
+        · {{ total }} clientes
+    </span>
+
+    {% if page < total_pages %}
+        <a class="btn-secondary"
+           href="/dashboard/clientes?page={{ page + 1 }}&limit={{ limit }}{% if buscar %}&buscar={{ buscar }}{% endif %}">
+            Siguiente →
+        </a>
+    {% endif %}
+
+</div>
+{% endif %}
+
+
+    </div>
+
+</section>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const table =
+        document.getElementById("clientesTable");
+
+    if (!table) return;
+
+    const headers =
+        table.querySelectorAll("th[data-sort]");
+
+    const tbody =
+        table.querySelector("tbody");
+
+    headers.forEach((header, index) => {
+
+        header.addEventListener("click", () => {
+
+            const type =
+                header.dataset.sort;
+
+            const currentAsc =
+                header.classList.contains(
+                    "sorted-asc"
+                );
+
+            headers.forEach(h => {
+
+                h.classList.remove(
+                    "sorted-asc",
+                    "sorted-desc"
+                );
+
+            });
+
+            header.classList.add(
+                currentAsc
+                    ? "sorted-desc"
+                    : "sorted-asc"
+            );
+
+            const rows =
+                Array.from(
+                    tbody.querySelectorAll("tr")
+                );
+
+            rows.sort((a, b) => {
+
+                let aText =
+                    a.children[index]
+                        .innerText
+                        .trim();
+
+                let bText =
+                    b.children[index]
+                        .innerText
+                        .trim();
+
+                if (type === "number") {
+
+                    aText = parseInt(
+                        aText.replace("#", "")
+                    ) || 0;
+
+                    bText = parseInt(
+                        bText.replace("#", "")
+                    ) || 0;
+
+                    return currentAsc
+                        ? bText - aText
+                        : aText - bText;
+                }
+
+                return currentAsc
+                    ? bText.localeCompare(
+                        aText,
+                        "es",
+                        {
+                            sensitivity: "base"
+                        }
+                    )
+                    : aText.localeCompare(
+                        bText,
+                        "es",
+                        {
+                            sensitivity: "base"
+                        }
+                    );
+
+            });
+
+            rows.forEach(row => {
+
+                tbody.appendChild(row);
+
+            });
+
+        });
+
+    });
+
+});
+
+
+}
+</script>
+
+{% endblock %}
+

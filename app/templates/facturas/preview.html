@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">FACTURACIÓN</span>
+        <h2>Vista previa de factura</h2>
+        <p>Revisa el PDF antes de emitir la factura.</p>
+    </div>
+</section>
+
+<section class="panel">
+
+    <div class="pdf-preview-wrapper">
+        <iframe
+            src="/estancias/{{ estancia.id }}/factura-preview-pdf"
+            class="pdf-preview">
+        </iframe>
+    </div>
+
+    <div class="factura-actions">
+        <form method="post"
+              action="/estancias/{{ estancia.id }}/facturar-confirmar">
+
+            <button type="submit" class="primary-button">
+                Sí, emitir factura
+            </button>
+
+        </form>
+
+        <a href="/estancias/listado"
+           class="btn-secondary">
+            Cancelar
+        </a>
+    </div>
+
+</section>
+
+
+
+
+    </div>
+
+</section>
+
+{% endblock %}

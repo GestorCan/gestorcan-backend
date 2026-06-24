@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">Fiscalidad</span>
+        <h2>Factura rectificativa</h2>
+        <p>Generación de rectificativa VeriFactu.</p>
+    </div>
+</section>
+
+<section class="panel">
+
+    <div class="info-card">
+
+        <h3>Factura original</h3>
+
+        <p>
+            <strong>Número:</strong>
+            {{ factura.numero_factura }}
+        </p>
+
+        <p>
+            <strong>Cliente:</strong>
+            {{ factura.cliente.nombre }}
+            {{ factura.cliente.apellidos }}
+        </p>
+
+        <p>
+    <strong>Base imponible:</strong>
+    {{ factura.base_imponible }} €
+</p>
+
+<p>
+    <strong>IVA:</strong>
+    {{ factura.iva }} €
+</p>
+
+<p>
+    <strong>Total factura:</strong>
+    {{ factura.total }} €
+</p>
+
+    <hr>
+
+<h3>Conceptos de la factura</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Concepto</th>
+            <th>Importe original</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for concepto in conceptos %}
+        <tr>
+            <td>{{ concepto.nombre }}</td>
+            <td>{{ concepto.importe }} €</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+    </div>
+
+    <form
+        method="post"
+        action="/facturas/{{ factura.id }}/rectificar"
+        class="form-grid"
+    >
+
+        <div class="form-group">
+
+            <label>Motivo rectificación</label>
+
+            <textarea
+                name="motivo"
+                required
+            ></textarea>
+
+        </div>
+
+        <div class="form-group">
+    <label>Importe a rectificar IVA incluido (€)</label>
+
+    <input
+        type="number"
+        step="0.01"
+        name="total_rectificado"
+        required
+    >
+</div>
+
+<div class="form-preview">
+
+    <p>
+        El sistema calculará automáticamente:
+    </p>
+
+    <ul>
+        <li>Base imponible</li>
+        <li>IVA</li>
+        <li>Total rectificativo</li>
+    </ul>
+
+</div>
+
+        <button
+            type="submit"
+            class="primary-button"
+        >
+            Generar rectificativa
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}

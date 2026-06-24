@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">Clientes</span>
+        <h2>Nuevo cliente</h2>
+        <p>Alta de propietario en GestorCan.</p>
+    </div>
+
+    <a href="/dashboard/clientes" class="primary-button">Volver</a>
+</section>
+
+<section class="panel">
+    <form method="post" action="/dashboard/clientes/nuevo" class="form-dashboard">
+
+        <div class="form-grid">
+            <div class="field">
+                <label>Nombre *</label>
+                <input type="text" name="nombre" required>
+            </div>
+
+            <div class="field">
+                <label>Apellidos</label>
+                <input type="text" name="apellidos">
+            </div>
+
+            <div class="field">
+    <label>Tipo de documento</label>
+    <select name="tipo_documento">
+        <option value="NIF" selected>NIF</option>
+        <option value="NIE">NIE</option>
+        <option value="CIF">CIF</option>
+        <option value="PASAPORTE">PASAPORTE</option>
+        <option value="OTRO">OTRO</option>
+    </select>
+</div>
+
+<div class="field">
+    <label>Número de documento</label>
+    <input type="text" name="dni">
+</div>
+   {% if error %}
+<div class="toast-error">
+    ⚠ {{ error }}
+</div>
+
+<script>
+setTimeout(() => {
+    const toast = document.querySelector(".toast-error");
+    if (toast) {
+        toast.remove();
+    }
+}, 4000);
+</script>
+{% endif %}
+
+
+            <div class="field">
+                <label>Teléfono</label>
+                <input type="text" name="telefono">
+            </div>
+
+            <div class="field">
+                <label>Email</label>
+                <input type="email" name="email">
+            </div>
+
+            <div class="field">
+                <label>Dirección</label>
+                <input type="text" name="direccion">
+            </div>
+
+            <div class="field">
+                <label>Código postal</label>
+                <input type="text" name="codigo_postal">
+            </div>
+
+            <div class="field">
+                <label>Población</label>
+                <input type="text" name="poblacion">
+            </div>
+
+            <div class="field">
+                <label>Provincia</label>
+                <input type="text" name="provincia">
+            </div>
+
+            <div class="field">
+                <label>Redes sociales</label>
+                <input type="text" name="redes_sociales">
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Observaciones</label>
+            <textarea name="observaciones"></textarea>
+        </div>
+
+        <button type="submit" class="primary-button">Guardar cliente</button>
+
+<style>
+        .toast-error {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+
+    background: #dc2626;
+    color: white;
+
+    padding: 14px 20px;
+    border-radius: 10px;
+
+    box-shadow: 0 8px 20px rgba(0,0,0,.15);
+}
+
+</style>
+
+
+    </form>
+</section>
+
+{% endblock %}

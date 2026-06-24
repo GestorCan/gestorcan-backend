@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">Analytics</span>
+        <h2>Gráficas de ocupación</h2>
+        <p>Ocupación por tipos de habitaciones.</p>
+    </div>
+</section>
+
+<section class="panel">
+
+    <div class="chart-card">
+
+        <h3>Ocupación por tipos</h3>
+
+        <div class="chart-container">
+            <canvas id="ocupacionChart"></canvas>
+        </div>
+
+    </div>
+
+</section>
+
+<style>
+.chart-container{
+    position: relative;
+    height: 400px;
+    width: 100%;
+}
+
+.chart-card{
+    padding: 20px;
+}
+</style>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+async function cargarGraficaOcupacion() {
+
+    const response = await fetch("/api/ocupacion-tipos");
+
+    const data = await response.json();
+
+    const labels = data.map(x => x.fecha);
+
+    const pequenas = data.map(x => x.pequeña);
+    const medianas = data.map(x => x.mediana);
+    const grandes = data.map(x => x.grande);
+    const gigantes = data.map(x => x.gigante);
+
+    const ctx = document.getElementById("ocupacionChart");
+
+    new Chart(ctx, {
+
+        type: "line",
+
+        data: {
+            labels: labels,
+
+            datasets: [
+
+                {
+                    label: "Pequeñas",
+                    data: pequenas,
+                    borderColor: "#3b82f6",
+                    backgroundColor: "#3b82f6",
+                    tension: 0.4
+                },
+
+                {
+                    label: "Medianas",
+                    data: medianas,
+                    borderColor: "#10b981",
+                    backgroundColor: "#10b981",
+                    tension: 0.4
+                },
+
+                {
+                    label: "Grandes",
+                    data: grandes,
+                    borderColor: "#f97316",
+                    backgroundColor: "#f97316",
+                    tension: 0.4
+                },
+
+                {
+                    label: "Gigantes",
+                    data: gigantes,
+                    borderColor: "#ef4444",
+                    backgroundColor: "#ef4444",
+                    tension: 0.4
+                }
+
+            ]
+        },
+
+        options: {
+
+    responsive: true,
+    maintainAspectRatio: false,
+
+    plugins: {
+        legend: {
+            position: "top"
+        }
+    },
+
+    scales: {
+        y: {
+            beginAtZero: true
+        }
+    }
+}
+
+    });
+}
+
+cargarGraficaOcupacion();
+
+
+
+
+
+
+</script>
+
+{% endblock %}
+

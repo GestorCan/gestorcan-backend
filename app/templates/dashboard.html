@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script src="https://unpkg.com/lucide@latest"></script>
+
+
+<script>
+  lucide.createIcons();
+</script>
+
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">Panel principal</span>
+        <h2>Bienvenido a GestorCan</h2>
+        <p>Gestiona clientes, mascotas, estancias, tarifas y facturación desde un único panel.</p>
+    </div>
+
+    <a href="/estancias/form" class="primary-button">+ Nueva estancia</a>
+</section>
+
+<section class="stats-grid">
+    <div class="stat-card">
+        <i data-lucide="users"></i>
+        <span>Clientes</span>
+        <strong>{{ datos.total_clientes }}</strong>
+        <small>Registrados</small>
+    </div>
+
+    <div class="stat-card">
+        <i data-lucide="dog"></i>
+        <span>Mascotas</span>
+        <strong>{{ datos.total_mascotas }}</strong>
+        <small>En base de datos</small>
+    </div>
+
+    <div class="stat-card">
+        <i data-lucide="home"></i>
+        <strong>{{ datos.estancias_activas }}</strong>
+        <small>Actualmente alojadas</small>
+    </div>
+
+    <div class="stat-card highlight">
+        <span>Ocupación</span>
+        <strong>{{ datos.ocupacion }}%</strong>
+        <small>{{ datos.estancias_activas }} / {{ datos.capacidad_total }}</small>
+    </div>
+
+    <div class="stat-card">
+    <i data-lucide="log-in"></i>
+    <span>Entradas hoy</span>
+    <strong>{{ datos.total_entradas_hoy }}</strong>
+    <small>Programadas hoy</small>
+</div>
+
+<div class="stat-card">
+    <i data-lucide="log-out"></i>
+    <span>Salidas hoy</span>
+    <strong>{{ datos.total_salidas_hoy }}</strong>
+    <small>Previstas hoy</small>
+</div>
+
+<div class="stat-card">
+    <i data-lucide="door-open"></i>
+    <span>Habitaciones libres</span>
+    <strong>{{ datos.habitaciones_libres }}</strong>
+    <small>Disponibles</small>
+</div>
+
+<div class="stat-card">
+    <i data-lucide="euro"></i>
+    <span>Ingresos mes</span>
+    <strong>{{ datos.ingresos_mes }}€</strong>
+    <small>Facturación mensual</small>
+</div>
+
+
+</section>
+
+<section class="section-title">
+    <h3>Módulos de gestión</h3>
+    <p>Accesos rápidos a las áreas principales del sistema.</p>
+</section>
+
+<section class="modules-grid">
+    {% for modulo in modulos %}
+    <a href="{{ modulo.url }}" class="module-card">
+
+        <div class="module-icon">
+    <i data-lucide="{{ modulo.icono }}"></i>
+        </div>
+        <div>
+            <h4>{{ modulo.nombre }}</h4>
+            <p>{{ modulo.descripcion }}</p>
+        </div>
+        <i data-lucide="arrow-right" class="arrow"></i>
+    </a>
+    {% endfor %}
+</section>
+
+<section class="bottom-grid">
+    <div class="panel">
+        <h3>Actividad de hoy</h3>
+
+{% if datos.entradas_hoy or datos.salidas_hoy %}
+
+    {% for e in datos.entradas_hoy %}
+        <p>🟢 Entrada: {{ e.mascota }}{% if e.habitacion %} · Hab. {{ e.habitacion }}{% endif %}</p>
+    {% endfor %}
+
+    {% for e in datos.salidas_hoy %}
+        <p>🔴 Salida: {{ e.mascota }}{% if e.habitacion %} · Hab. {{ e.habitacion }}{% endif %}</p>
+    {% endfor %}
+
+{% else %}
+    <p>No hay movimientos registrados hoy.</p>
+{% endif %}
+
+
+
+
+    </div>
+
+    <div class="panel">
+    <h3>Avisos</h3>
+
+    {% if datos.avisos %}
+        {% for aviso in datos.avisos %}
+            <p class="aviso {{ aviso.tipo }}">
+                {{ aviso.texto }}
+            </p>
+        {% endfor %}
+    {% else %}
+        <p>Sin incidencias pendientes. Milagro administrativo.</p>
+    {% endif %}
+</div>
+
+
+</section>
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+
+
+});
+
+</script>
+
+
+
+
+
+{% endblock %}
+.bottom-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.chart-panel {
+    margin-top: 24px;
+    padding: 28px;
+}
+
+.chart-wrapper {
+    position: relative;
+    height: 320px;
+    width: 100%;
+}
+
+#ocupacionChart,
+#gruposChart {
+    width: 100% !important;
+    height: 100% !important;
+}

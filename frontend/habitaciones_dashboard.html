@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Habitaciones</title>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            background:#f4f4f4;
+            padding:20px;
+        }
+
+        h1{
+            margin-bottom:30px;
+        }
+
+        .grupo{
+            margin-bottom:40px;
+        }
+
+        .habitaciones-grid{
+            display:flex;
+            gap:15px;
+            flex-wrap:wrap;
+        }
+
+        .card{
+            background:white;
+            border-radius:12px;
+            padding:15px;
+            min-width:220px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .estado{
+            font-weight:bold;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<h1>Dashboard Habitaciones</h1>
+
+<div id="contenido"></div>
+
+<script>
+
+async function cargarDashboard(){
+
+    const response = await fetch("/habitaciones/dashboard/grupos");
+
+    const data = await response.json();
+
+    const contenido = document.getElementById("contenido");
+
+    contenido.innerHTML = "";
+
+    Object.entries(data).forEach(([grupo, habitaciones]) => {
+
+        let html = `
+            <div class="grupo">
+                <h2>${grupo.toUpperCase()}</h2>
+
+                <div class="habitaciones-grid">
+        `;
+
+        habitaciones.forEach(h => {
+
+            html += `
+                <div class="card"
+                     style="border-left:8px solid ${h.color}">
+
+                    <h3>${h.icono} ${h.nombre}</h3>
+
+                    <p class="estado">
+                        ${h.texto_estado}
+                    </p>
+
+                    <p>
+                        Capacidad:
+                        ${h.texto_capacidad}
+                    </p>
+
+                    <p>
+                        ${h.permite_camara
+                            ? "📷 Cámara"
+                            : "Sin cámara"}
+                    </p>
+
+                    <p>
+                        ${h.permite_compartir
+                            ? "👥 Compartida"
+                            : "Individual"}
+                    </p>
+
+                    <small>
+                        ${h.observaciones || ""}
+                    </small>
+
+                </div>
+            `;
+        });
+
+        html += `
+                </div>
+            </div>
+        `;
+
+        contenido.innerHTML += html;
+    });
+}
+
+cargarDashboard();
+
+</script>
+
+</body>
+</html>

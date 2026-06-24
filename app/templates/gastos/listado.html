@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">GASTOS</span>
+        <h1>Gestión de gastos</h1>
+        <p>Control de tickets, facturas recibidas y costes operativos.</p>
+    </div>
+</section>
+
+<section class="cards-grid">
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>Total gastos</h3>
+            <p style="font-size:2rem;">
+                {{ "%.2f"|format(total_gastos or 0) }} €
+            </p>
+        </div>
+    </div>
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>IVA soportado</h3>
+            <p style="font-size:2rem;">
+                {{ "%.2f"|format(iva_soportado or 0) }} €
+            </p>
+        </div>
+    </div>
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>Facturas</h3>
+            <p style="font-size:2rem;">
+                {{ total_facturas }}
+            </p>
+        </div>
+    </div>
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>Tickets</h3>
+            <p style="font-size:2rem;">
+                {{ total_tickets }}
+            </p>
+        </div>
+    </div>
+
+</section>
+
+<section class="panel filtros-panel">
+    <form method="get"
+          action="/gastos/listado"
+          class="filters-grid">
+
+        <div class="form-group">
+            <label>Desde</label>
+            <input type="date"
+                   name="fecha_desde"
+                   value="{{ fecha_desde or '' }}">
+        </div>
+
+        <div class="form-group">
+            <label>Hasta</label>
+            <input type="date"
+                   name="fecha_hasta"
+                   value="{{ fecha_hasta or '' }}">
+        </div>
+
+        <div class="form-group">
+            <label>Proveedor</label>
+            <select name="proveedor">
+                <option value="">Todos</option>
+
+                {% for p in proveedores %}
+                    <option value="{{ p.nombre }}"
+                            {% if proveedor_filtro == p.nombre %}selected{% endif %}>
+                        {{ p.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Tipo gasto</label>
+            <select name="tipo_gasto">
+                <option value="">Todos</option>
+
+                {% for t in tipos_gasto %}
+                    <option value="{{ t.nombre }}"
+                            {% if tipo_gasto_filtro == t.nombre %}selected{% endif %}>
+                        {{ t.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Documento</label>
+            <select name="tipo_documento">
+                <option value="">Todos</option>
+                <option value="ticket" {% if tipo_documento_filtro == "ticket" %}selected{% endif %}>Ticket</option>
+                <option value="factura" {% if tipo_documento_filtro == "factura" %}selected{% endif %}>Factura</option>
+            </select>
+        </div>
+
+        <div class="filter-actions">
+            <button type="submit" class="btn-primary">
+                Filtrar
+            </button>
+
+            <a href="/gastos/listado" class="btn-secondary">
+                Limpiar
+            </a>
+        </div>
+
+    </form>
+
+</section>
+
+
+<section class="panel">
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <h2>Listado de gastos</h2>
+<div style="display:flex; gap:0.75rem;">
+
+    <a href="/gastos/exportar_excel"
+       class="btn-secondary">
+        Exportar Excel
+    </a>
+
+    <a href="/gastos/nuevo"
+       class="btn-secondary">
+        Nuevo gasto
+    </a>
+
+</div>
+
+
+    </div>
+
+    <table class="table">
+
+    <thead>
+<tr>
+    <th>Fecha</th>
+    <th>Documento</th>
+    <th>Proveedor</th>
+    <th>Tipo gasto</th>
+    <th>Base / Importe</th>
+    <th>IVA soportado</th>
+    <th>Retención</th>
+    <th>Total</th>
+    <th>Archivo</th>
+    <th>Acciones</th>
+</tr>
+</thead>
+
+    <tbody>
+{% for gasto in gastos %}
+<tr>
+    <td>{{ gasto.fecha.strftime('%d/%m/%Y') if gasto.fecha else '-' }}</td>
+
+    <td>{{ gasto.tipo_documento|capitalize }}</td>
+
+    <td>{{ gasto.proveedor }}</td>
+
+    <td>{{ gasto.tipo_gasto }}</td>
+
+    <td class="text-right">
+    {% if gasto.tipo_documento|lower == "factura" %}
+        {{ "%.2f"|format(gasto.base_imponible or 0) }} €
+    {% else %}
+        {{ "%.2f"|format(gasto.importe or 0) }} €
+    {% endif %}
+</td>
+
+    <td class="text-right">{{ "%.2f"|format(gasto.importe_iva or 0) }} €</td>
+
+    <td class="text-right">{{ "%.2f"|format(gasto.importe_retencion or 0) }} €</td>
+
+    <td style="white-space: nowrap;">
+        <strong>{{ "%.2f"|format(gasto.total_factura or gasto.importe or 0) }} €</strong>
+    </td>
+
+    <td>
+    {% if gasto.archivo_path %}
+        <a href="{{ gasto.archivo_path }}"
+           target="_blank">
+           📄 Ver
+        </a>
+    {% endif %}
+</td>
+
+    <td>
+    <div style="display:flex; gap:0.5rem;">
+
+        <a href="/gastos/editar/{{ gasto.id }}"
+           class="btn-secondary">
+            Editar
+        </a>
+
+        <form method="post"
+              action="/gastos/borrar/{{ gasto.id }}"
+              onsubmit="return confirm('¿Borrar este gasto?');">
+
+            <button type="submit"
+                    class="btn-secondary">
+                Borrar
+            </button>
+
+        </form>
+
+    </div>
+</td>
+</tr>
+{% endfor %}
+</tbody>
+
+</table>
+
+</section>
+
+<style>
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.table th,
+.table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.table th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #6b7280;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 1000px) {
+    .filters-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 650px) {
+    .filters-grid {
+        grid-template-columns: 1fr;
+    }
+}
+ .filtros-panel {
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
+}
+</style>
+
+
+{% endblock %}

@@ -1,0 +1,559 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+
+    <div>
+        <span class="eyebrow">VERIFACTU</span>
+        <h1>Dashboard VeriFactu</h1>
+        <p>Control de registros, firmas, envíos y respuestas AEAT.</p>
+
+    </div>
+</section>
+{% if request.query_params.get("msg") %}
+<section class="panel" style="margin-bottom:1rem;">
+    <span class="badge badge-success">
+        {{ request.query_params.get("msg") }}
+    </span>
+</section>
+{% endif %}
+
+<section class="cards-grid">
+    <div class="module-card">
+    <div class="card-content">
+        <h3>Total registros</h3>
+
+         <p style="font-size: 2rem;">{{ total_registros }}</p>
+    </div>
+</div>
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>Firmados</h3>
+            <p style="font-size: 2rem;">{{ firmados }}</p>
+        </div>
+    </div>
+
+<div class="module-card">
+    <div class="card-content">
+        <h3>Pendientes</h3>
+        <p style="font-size: 2rem;">
+            {{ pendientes }}
+        </p>
+    </div>
+</div>
+
+  <section class="panel" style="margin-bottom:1.5rem;">
+
+    <h2>Auditoría VeriFactu</h2>
+
+    {% if auditoria.cadena_valida %}
+
+        <div class="badge badge-success">
+            Cadena Hash Correcta
+        </div>
+
+        {% if auditoria.cadena_valida %}
+
+
+
+{% else %}
+
+    <div class="badge badge-danger">
+        Cadena Hash con errores
+    </div>
+
+{% endif %}
+
+<p>
+    Facturas verificadas:
+    <strong>
+        {{ auditoria.facturas_verificadas }}
+    </strong>
+</p>
+
+<p>
+    Errores detectados:
+    <strong>
+        {{ auditoria.errores_detectados }}
+    </strong>
+</p>
+
+<p>
+    Primer hash:
+    <strong>
+        {{ auditoria.primer_hash[:12] if auditoria.primer_hash else "-" }}
+    </strong>
+</p>
+
+<p>
+    Último hash:
+    <strong>
+        {{ auditoria.ultimo_hash[:12] if auditoria.ultimo_hash else "-" }}
+    </strong>
+</p>
+
+    {% else %}
+
+        <div class="badge badge-danger">
+            Cadena Hash con errores
+        </div>
+
+        <p>
+            Errores detectados:
+            <strong>{{ auditoria.errores|length }}</strong>
+        </p>
+
+    {% endif %}
+
+
+</section>
+    <section class="panel">
+
+    <h2>Detalle de cadena</h2>
+
+<div class="detalle-cadena">
+    <table class="table">
+
+        <thead>
+            <tr>
+                <th>Factura</th>
+
+                <th>Hash ante.</th>
+
+                <th>Hash actu.</th>
+
+                <th>Integridad</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for f in facturas %}
+
+            <tr>
+
+                <td>
+                    {{ f.numero_factura }}
+                </td>
+
+                <td class="hash-cell" title="{{ f.hash_anterior }}">
+                    {{ (f.hash_anterior or "-")[:10] }}...
+            </td>
+
+                <td class="hash-cell" title="{{ f.hash_actual }}">
+                    {{ (f.hash_actual or "-")[:10] }}...
+            </td>
+
+                <td>
+                {% if auditoria.cadena_valida %}
+                    <span class="badge badge-success">
+                        ✓
+                    </span>
+                {% else %}
+                    <span class="badge badge-danger">
+                        ✗
+                    </span>
+                {% endif %}
+            </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+</div>
+
+</section>
+
+
+
+
+
+   <div class="module-card">
+        <div class="card-content">
+            <h3>Aceptados</h3>
+            <p style="font-size: 2rem;">{{ aceptados }}</p>
+        </div>
+    </div>
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>Errores</h3>
+            <p style="font-size: 2rem;">{{ errores }}</p>
+        </div>
+    </div>
+</section>
+
+<section class="panel" style="margin-bottom: 1.5rem;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <h2>Auditoría VeriFactu</h2>
+            <p>Verificación de integridad de la cadena de huellas.</p>
+        </div>
+
+        <div style="display:flex; gap:0.75rem;">
+
+
+            <form action="/fiscal/verifactu/auditoria/recalcular-hash"
+      method="post"
+      style="display:inline;">
+    <button type="submit" class="btn-secondary">
+        Recalcular cadena
+    </button>
+</form>
+               <a href="/fiscal/verifactu/auditoria/pdf"
+   class="btn-secondary">
+    Informe PDF
+</a>
+     <form action="/fiscal/verifactu/enviar-pendientes"
+      method="post"
+      style="display:inline;">
+    <button type="submit" class="btn-secondary">
+        Enviar pendientes
+    </button>
+</form>
+
+
+
+            </form>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+<section class="panel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h2>Registros VeriFactu</h2>
+
+        <a href="/fiscal" class="btn-secondary">
+            Volver a Fiscal
+        </a>
+    </div>
+
+    <div style="margin-bottom:1rem;">
+
+
+
+</div>
+
+
+
+
+
+
+
+    <table id="tabla-verifactu" class="table">
+
+        <thead>
+            <tr>
+    <th class="sortable" data-sort="0">Factura ↕</th>
+    <th class="sortable" data-sort="1">Fecha ↕</th>
+    <th class="sortable" data-sort="2">Tipo ↕</th>
+    <th class="sortable" data-sort="3">Estado ↕</th>
+    <th class="sortable" data-sort="4">Enviado ↕</th>
+    <th class="sortable" data-sort="5">CSV ↕</th>
+    <th class="sortable" data-sort="6">Fecha envío ↕</th>
+    <th>Respuesta AEAT</th>
+    <th>XML</th>
+    <th>Firmado</th>
+    <th>QR</th>
+    <th>Acciones</th>
+
+</tr>
+        </thead>
+
+        <tbody>
+
+        {% for r in registros %}
+            <tr>
+
+                <td>
+                    <strong>{{ r.numero_factura }}</strong>
+                </td>
+
+                <td>
+                    {{ r.created_at.strftime('%d/%m/%Y') if r.created_at else '-' }}
+                </td>
+
+                <td>
+                    {{ r.tipo_factura }}
+                </td>
+
+                <td>
+
+                    {% if r.estado == "aceptado" %}
+                        <span class="badge badge-success">
+                            Aceptado
+                        </span>
+
+                    {% elif r.estado == "error" %}
+                        <span class="badge badge-danger">
+                            Error
+                        </span>
+
+                    {% elif r.estado == "firmado" %}
+                        <span class="badge badge-warning">
+                            Firmado
+                        </span>
+
+                    {% else %}
+                        <span class="badge">
+                            {{ r.estado }}
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+                    {% if r.enviado %}
+                        Sí
+                    {% else %}
+                        No
+                    {% endif %}
+                </td>
+
+                <td>
+                    {{ r.csv_aeat or "-" }}
+                </td>
+<td>
+    {{ r.fecha_envio.strftime('%d/%m/%Y %H:%M') if r.fecha_envio else '-' }}
+</td>
+
+<td>
+    {% if r.descripcion_error_aeat %}
+        <span class="badge badge-danger">
+            {{ r.codigo_error_aeat or "Error" }}
+        </span>
+    {% elif r.estado_aeat %}
+        <span class="badge badge-success">
+            {{ r.estado_aeat }}
+        </span>
+    {% else %}
+        -
+    {% endif %}
+</td>
+                <td>
+                    {% if r.xml_path %}
+                        <a href="/fiscal/verifactu/xml/{{ r.id }}">
+                            XML
+                        </a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if r.signed_xml_path %}
+                        <a href="/fiscal/verifactu/signed/{{ r.id }}">
+                            Firmado
+                        </a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if r.qr_path %}
+                        <a href="/fiscal/verifactu/qr/{{ r.id }}">
+                            QR
+                        </a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+
+    {% if not r.enviado and r.estado == "firmado" %}
+        <form action="/fiscal/verifactu/enviar/{{ r.id }}"
+              method="post"
+              style="display:inline;">
+            <button type="submit">
+                Enviar
+            </button>
+        </form>
+
+    {% elif r.estado == "error" %}
+
+        <button
+            onclick="alert('{{ r.descripcion_error_aeat or 'Sin detalle AEAT' }}')">
+            Ver error
+        </button>
+
+    {% elif r.estado == "aceptado" %}
+
+        <span class="badge badge-success">
+            OK
+        </span>
+
+    {% endif %}
+
+</td>
+
+            </tr>
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+</section>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+
+    const table = document.getElementById("tabla-verifactu");
+    const directions = {};
+
+    if (!table) {
+        console.log("No existe tabla-verifactu");
+        return;
+    }
+
+    document.querySelectorAll("th[data-sort]").forEach(function (th) {
+        th.style.cursor = "pointer";
+
+        th.addEventListener("click", function () {
+            const col = parseInt(th.dataset.sort);
+            const tbody = table.tBodies[0];
+            const rows = Array.from(tbody.querySelectorAll("tr"));
+
+            const direction = directions[col] === "asc" ? "desc" : "asc";
+            directions[col] = direction;
+
+            rows.sort(function (a, b) {
+                let x = a.children[col].innerText.trim().toLowerCase();
+                let y = b.children[col].innerText.trim().toLowerCase();
+
+                if (col === 1) {
+                    x = parseFecha(x);
+                    y = parseFecha(y);
+                }
+
+                if (x < y) return direction === "asc" ? -1 : 1;
+                if (x > y) return direction === "asc" ? 1 : -1;
+                return 0;
+            });
+
+            rows.forEach(function (row) {
+                tbody.appendChild(row);
+            });
+        });
+    });
+
+    function parseFecha(value) {
+        const parts = value.split("/");
+        if (parts.length !== 3) {
+            return new Date(0);
+        }
+
+        return new Date(
+            parseInt(parts[2]),
+            parseInt(parts[1]) - 1,
+            parseInt(parts[0])
+        );
+    }
+});
+</script>
+
+
+<style>
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.95rem;
+}
+
+.table th,
+.table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.table th {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    color: #6b7280;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+
+.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.sortable:hover {
+    color: #2563eb;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.badge-success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.badge-warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.badge-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+.hash-cell{
+    font-size:0.85rem !important;
+    font-family:monospace;
+    color:#6b7280;
+    white-space:nowrap;
+}
+ .detalle-cadena .table{
+    font-size: 0.72rem;
+}
+
+.detalle-cadena th{
+    font-size: 0.65rem !important;
+    font-weight: 600;
+    padding: 0.4rem;
+}
+
+.detalle-cadena td{
+    font-size: 0.70rem !important;
+    padding: 0.4rem;
+    font-family: monospace;
+}
+ .detalle-cadena table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.detalle-cadena th,
+.detalle-cadena td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+
+    <div>
+        <span class="eyebrow">GASTOS</span>
+        <h1>Proveedores</h1>
+        <p>Gestión de proveedores habituales para tickets y facturas.</p>
+    </div>
+</section>
+{% if error %}
+<div class="alert-error">
+    ⚠️ {{ error }}
+</div>
+{% endif %}
+<section class="panel">
+
+    <div class="panel-header">
+        <div>
+            <h2>Listado de proveedores</h2>
+            <p>Proveedores usados en la gestión de gastos.</p>
+        </div>
+
+        <a href="/gastos/proveedores/nuevo" class="btn-secondary">
+            Nuevo proveedor
+        </a>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>CIF/NIF</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>Tipo gasto habitual</th>
+                <th>Retención</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for p in proveedores %}
+
+
+            <tr>
+    <td><strong>{{ p.nombre }}</strong></td>
+    <td>{{ p.cif or "-" }}</td>
+    <td>{{ p.telefono or "-" }}</td>
+    <td>{{ p.email or "-" }}</td>
+    <td>{{ p.tipo_gasto_defecto or "-" }}</td>
+    <td>{{ "%.2f"|format(p.porcentaje_retencion_defecto or 0) }} %</td>
+
+    <td>
+        <div style="display:flex; gap:0.5rem;">
+            <a href="/gastos/proveedores/editar/{{ p.id }}"
+               class="btn-secondary">
+                Editar
+            </a>
+
+            <form action="/gastos/proveedores/borrar/{{ p.id }}"
+                  method="post"
+                  onsubmit="return confirm('¿Borrar este proveedor?');">
+                <button type="submit" class="btn-secondary">
+                    Borrar
+                </button>
+            </form>
+        </div>
+    </td>
+</tr>
+
+            {% endfor %}
+
+        </tbody>
+    </table>
+
+</section>
+
+<style>
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.panel-header h2 {
+    margin: 0 0 0.35rem 0;
+}
+
+.panel-header p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.table th,
+.table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.table th {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    color: #6b7280;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+.alert-error {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 14px;
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    font-weight: 600;
+}
+
+</style>
+
+
+{% endblock %}

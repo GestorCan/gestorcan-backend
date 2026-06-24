@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Planning Resort</title>
+
+<style>
+
+body{
+    margin:0;
+    padding:20px;
+    background:#0f172a;
+    color:white;
+    font-family:Arial;
+}
+
+h1{
+    margin-bottom:20px;
+}
+
+.container{
+    overflow:auto;
+    background:#111827;
+    border-radius:18px;
+    padding:20px;
+    position: relative;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns: 140px repeat(15, 90px);
+    gap:4px;
+    position: relative;
+}
+
+.header{
+    background:#1e293b;
+    padding:12px;
+    border-radius:10px;
+    text-align:center;
+    font-weight:bold;
+}
+
+.room{
+    background:#1e293b;
+    padding:14px;
+    border-radius:12px;
+    font-weight:bold;
+    min-height:140px;
+}
+
+.cell{
+    height:140px;
+    background:#172131;
+    border-radius:10px;
+}
+
+.row{
+    display:contents;
+
+}
+
+.reserva{
+    height:34px;
+
+    margin-top:6px;
+
+    border-radius:14px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+
+    padding-left:14px;
+
+    font-size:14px;
+    font-weight:bold;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 4px 10px rgba(0,0,0,0.25);
+
+    transition:0.2s;
+    font-size:12px;
+}
+
+.reserva:hover{
+    transform:scale(1.02);
+}
+
+.grande{
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+}
+
+.mediana{
+    background:linear-gradient(135deg,#f59e0b,#d97706);
+}
+
+.pequeña{
+    background:linear-gradient(135deg,#22c55e,#16a34a);
+}
+
+small{
+    opacity:0.8;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Planning Resort</h1>
+
+<div class="container">
+
+<div id="planning" class="grid"></div>
+
+</div>
+
+<script>
+
+async function cargarPlanning(){
+
+    const response = await fetch(
+        "/habitaciones/planning-barras?dias=15"
+    );
+
+    const data = await response.json();
+
+    const planning = document.getElementById("planning");
+
+    planning.innerHTML = "";
+
+    planning.innerHTML += `<div class="header">Habitación</div>`;
+
+    for(let i=0;i<data.dias;i++){
+
+        const fecha = new Date(data.fecha_inicio);
+
+        fecha.setDate(fecha.getDate()+i);
+
+        const texto =
+            fecha.toLocaleDateString(
+                "es-ES",
+                {
+                    day:"2-digit",
+                    month:"2-digit"
+                }
+            );
+
+        planning.innerHTML += `
+            <div class="header">${texto}</div>
+        `;
+    }
+
+    data.habitaciones.forEach(h=>{
+
+        planning.innerHTML += `
+            <div class="room">
+                ${h.habitacion}
+                <br>
+                <small>${h.grupo}</small>
+            </div>
+        `;
+
+        for(let i=0;i<data.dias;i++){
+
+            planning.innerHTML += `
+                <div class="cell"></div>
+            `;
+        }
+
+    });
+
+    setTimeout(()=>{
+
+        const rows =
+            document.querySelectorAll(".room");
+
+        data.habitaciones.forEach((h,index)=>{
+
+            const rowTop =
+                rows[index].offsetTop;
+
+            h.reservas.forEach((r,reservaIndex)=>{
+
+                const barra =
+                    document.createElement("div");
+
+                barra.className =
+                    `reserva ${h.grupo}`;
+
+                barra.style.position = "absolute";
+
+               const container = document.querySelector(".container");
+const containerRect = container.getBoundingClientRect();
+const roomRect = rows[index].getBoundingClientRect();
+
+const ANCHO_DIA = 105;
+const OFFSET_DIAS = 165;
+
+barra.style.left =
+    `${OFFSET_DIAS + (r.inicio_offset * ANCHO_DIA)}px`;
+
+const OFFSET_VERTICAL = 8;
+const ALTURA_RESERVA = 38;
+
+barra.style.top =
+    `${
+        roomRect.top
+        - containerRect.top
+        + OFFSET_VERTICAL
+        + (reservaIndex * ALTURA_RESERVA)
+    }px`;
+
+barra.style.width =
+    `${r.duracion * ANCHO_DIA - 8}px`;
+
+barra.innerHTML = `
+    ${r.mascota}
+    <small>
+        ${r.cliente}
+    </small>
+    <small>
+        ${r.inicio} → ${r.fin}
+    </small>
+`;
+barra.title =
+    `${r.mascota} - ${r.cliente}\n${r.inicio} → ${r.fin}`;
+
+                document.querySelector(".container").appendChild(barra);
+
+            });
+
+        });
+
+    },100);
+
+}
+
+cargarPlanning();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ficha Cliente</title>
+</head>
+<body>
+
+<h2>Ficha del Cliente</h2>
+
+<div id="datos"></div>
+
+<button onclick="descargarPDF()">📄 Descargar PDF</button>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+async function cargarCliente() {
+    const res = await fetch(`http://127.0.0.1:8000/clientes/${id}`);
+    const c = await res.json();
+
+    document.getElementById("datos").innerHTML = `
+        <p><strong>Nombre:</strong> ${c.nombre}</p>
+        <p><strong>DNI:</strong> ${c.dni}</p>
+        <p><strong>Teléfono:</strong> ${c.telefono}</p>
+        <p><strong>Email:</strong> ${c.email}</p>
+    `;
+}
+
+function descargarPDF() {
+    window.open(`http://127.0.0.1:8000/clientes/${id}/pdf`, "_blank");
+}
+
+cargarCliente();
+</script>
+
+</body>
+</html>

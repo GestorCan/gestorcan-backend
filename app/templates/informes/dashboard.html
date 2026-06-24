@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">Analytics</span>
+        <h2>Informes y estadísticas</h2>
+        <p>Análisis operativo, ocupación y rendimiento económico.</p>
+    </div>
+</section>
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <h3>Ocupación media</h3>
+        <div class="stat-value">
+            {{ ocupacion_media }}%
+        </div>
+        <p>Últimos 30 días</p>
+    </div>
+
+    <div class="stat-card">
+        <h3>Ingresos</h3>
+        <div class="stat-value">
+            {{ ingresos }}€
+        </div>
+        <p>Facturación mensual</p>
+    </div>
+
+    <div class="stat-card">
+        <h3>Estancias</h3>
+        <div class="stat-value">
+            {{ estancias_mes }}
+        </div>
+        <p>Este mes</p>
+    </div>
+
+    <div class="stat-card">
+        <h3>Clientes activos</h3>
+        <div class="stat-value">
+            {{ clientes_activos }}
+        </div>
+        <p>Con reservas recientes</p>
+    </div>
+
+</div>
+
+
+<section class="panel">
+
+    <a href="/planner" class="module-card">
+        <div class="icon-box">
+            <i data-lucide="calendar-days"></i>
+        </div>
+
+        <div class="card-content">
+            <h3>Planner semanal</h3>
+            <p>Vista hotelera de ocupación por habitaciones.</p>
+        </div>
+
+        <i data-lucide="arrow-right" class="arrow-icon"></i>
+    </a>
+
+    <div class="reports-menu">
+
+    <a href="/informes/ocupacion" class="report-link">
+        <i data-lucide="line-chart"></i>
+        <span>Gráficas de ocupación</span>
+    </a>
+
+    <a href="/informes/ingresos" class="report-link">
+        <i data-lucide="badge-euro"></i>
+        <span>Ingresos mensuales</span>
+    </a>
+
+    <a href="/informes/exportacion" class="report-link">
+        <i data-lucide="file-spreadsheet"></i>
+        <span>Exportación Excel/PDF</span>
+    </a>
+
+    <a href="/informes/clientes-consumo" class="report-link">
+    <i data-lucide="users-round"></i>
+    <span>Clientes / consumo</span>
+</a>
+
+    <a href="/informes/razas" class="report-link">
+    <i data-lucide="paw-print"></i>
+    <span>Razas y tamaños</span>
+</a>
+
+    <a href="/informes/comparativas" class="report-link">
+        <i data-lucide="bar-chart-3"></i>
+        <span>Comparativas mensuales</span>
+    </a>
+
+    <a href="/informes/comparativas-anuales" class="report-link">
+    <i data-lucide="chart-column-big"></i>
+    <span>Comparativas anuales</span>
+</a>
+
+
+</div>
+
+</section>
+
+
+
+{% endblock %}

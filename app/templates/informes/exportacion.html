@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">Exportaciones</span>
+        <h2>Exportación Excel</h2>
+        <p>Exporta clientes, mascotas y estancias entre fechas.</p>
+    </div>
+</section>
+
+<section class="panel">
+
+    <form method="get"
+          action="/api/exportar-excel"
+          class="export-form">
+
+        <label>Tipo de exportación</label>
+        <select name="tipo" required>
+            <option value="clientes">Clientes</option>
+            <option value="mascotas">Mascotas</option>
+            <option value="estancias">Estancias / Albaranes</option>
+        </select>
+
+        <label>Fecha desde</label>
+        <input type="date" name="desde">
+
+        <label>Fecha hasta</label>
+        <input type="date" name="hasta">
+
+        <button type="submit" class="btn-primary">
+            Exportar Excel
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}

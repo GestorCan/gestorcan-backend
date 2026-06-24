@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">GASTOS</span>
+        <h1>Gestión de gastos</h1>
+        <p>Control de tickets, facturas recibidas, proveedores y tipos de gasto.</p>
+    </div>
+</section>
+
+<section class="cards-grid">
+
+    <a href="/gastos/listado" class="module-card">
+        <div class="icon-box">
+            <i data-lucide="receipt-text"></i>
+        </div>
+
+        <div class="card-content">
+            <h3>Listado de gastos</h3>
+            <p>Consulta tickets y facturas registradas.</p>
+        </div>
+
+        <i data-lucide="arrow-right" class="arrow-icon"></i>
+    </a>
+
+    <a href="/gastos/nuevo" class="module-card">
+        <div class="icon-box">
+            <i data-lucide="plus-circle"></i>
+        </div>
+
+        <div class="card-content">
+            <h3>Nuevo gasto</h3>
+            <p>Entrada rápida de tickets y facturas.</p>
+        </div>
+
+        <i data-lucide="arrow-right" class="arrow-icon"></i>
+    </a>
+
+    <a href="/gastos/proveedores" class="module-card">
+        <div class="icon-box">
+            <i data-lucide="truck"></i>
+        </div>
+
+        <div class="card-content">
+            <h3>Proveedores</h3>
+            <p>Alta y gestión de proveedores habituales.</p>
+        </div>
+
+        <i data-lucide="arrow-right" class="arrow-icon"></i>
+    </a>
+
+    <a href="/gastos/tipos" class="module-card">
+        <div class="icon-box">
+            <i data-lucide="tags"></i>
+        </div>
+
+        <div class="card-content">
+            <h3>Tipos de gasto</h3>
+            <p>Categorías e IVA habitual por defecto.</p>
+        </div>
+
+        <i data-lucide="arrow-right" class="arrow-icon"></i>
+    </a>
+
+</section>
+
+<section class="cards-grid">
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>Total gastos</h3>
+            <p style="font-size:2rem;">{{ total_gastos }}</p>
+        </div>
+    </div>
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>Tickets</h3>
+            <p style="font-size:2rem;">{{ total_tickets }}</p>
+        </div>
+    </div>
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>Facturas</h3>
+            <p style="font-size:2rem;">{{ total_facturas }}</p>
+        </div>
+    </div>
+
+</section>
+
+<script>
+    lucide.createIcons();
+</script>
+
+{% endblock %}

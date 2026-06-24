@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">Mascotas</span>
+        <h2>Nueva mascota</h2>
+        <p>Alta de mascota en GestorCan.</p>
+    </div>
+
+    <a href="/dashboard/mascotas" class="primary-button">
+        Volver
+    </a>
+</section>
+
+<section class="panel">
+
+    <form
+    method="post"
+    action="/dashboard/mascotas/nueva"
+    class="form-dashboard"
+    enctype="multipart/form-data"
+>
+
+        <div class="form-grid">
+
+            <div class="field">
+                <label>Cliente *</label>
+
+                <select name="cliente_id" required>
+                    <option value="">Seleccionar cliente</option>
+
+                    {% for c in clientes %}
+                    <option value="{{ c.id }}">
+                        {{ c.nombre }} {{ c.apellidos or "" }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Nombre *</label>
+                <input type="text" name="nombre" required>
+            </div>
+
+            <div class="field">
+               <label>Raza</label>
+
+<input
+    type="text"
+    id="raza"
+    name="raza"
+    list="lista_razas"
+    value="{{ mascota.raza if mascota is defined and mascota else '' }}"
+    placeholder="Escribe o selecciona una raza"
+>
+
+<datalist id="lista_razas"></datalist>
+
+<small class="ayuda-raza">
+    Puedes escribir una raza personalizada, por ejemplo: Mezcla de Chihuahua.
+</small>
+
+            <div class="field">
+                <label>Sexo</label>
+
+                <select name="sexo">
+                    <option value="">Seleccionar</option>
+                    <option value="Macho">Macho</option>
+                    <option value="Hembra">Hembra</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Tamaño</label>
+
+                <select name="tamano">
+                    <option value="">Seleccionar</option>
+                    <option value="Pequeño">Pequeño</option>
+                    <option value="Mediano">Mediano</option>
+                    <option value="Grande">Grande</option>
+                    <option value="Gigante">Gigante</option>
+
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Edad</label>
+                <input type="text" name="edad">
+            </div>
+
+            <div class="field">
+                <label>Número chip</label>
+                <input type="text" name="numero_chip">
+            </div>
+
+            <div class="field">
+                <label>Vacunas</label>
+
+                <select name="vacunas">
+                    <option value="">Seleccionar</option>
+                    <option value="Sí">Sí</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Comp. Personas</label>
+                <input type="text" name="comportamiento_personas">
+            </div>
+
+            <div class="field">
+                <label>Comp. Perros</label>
+                <input type="text" name="comportamiento_perros">
+            </div>
+
+        </div>
+
+        <div class="field">
+            <label>Enfermedades / medicación</label>
+
+            <textarea
+                name="enfermedades_medicacion"
+            ></textarea>
+        </div>
+
+        <div class="field">
+            <label>Observaciones</label>
+
+            <textarea
+                name="observaciones"
+            ></textarea>
+        </div>
+        <div class="field">
+                <label>Foto</label>
+                <input type="file" name="foto" accept="image/*">
+            </div>
+
+        <button type="submit" class="primary-button">
+            Guardar mascota
+        </button>
+
+    </form>
+
+</section>
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+    const datalist = document.getElementById("lista_razas");
+
+    if (!datalist) return;
+
+    const res = await fetch("/static/data/razas_perros.json");
+    const data = await res.json();
+
+    datalist.innerHTML = "";
+
+    data.razas.forEach(raza => {
+        const option = document.createElement("option");
+        option.value = raza;
+        datalist.appendChild(option);
+    });
+});
+</script>
+{% endblock %}

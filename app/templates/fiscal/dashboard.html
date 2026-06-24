@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">FISCAL</span>
+        <h1>Panel fiscal</h1>
+        <p>Gestión fiscal, legal y obligaciones tributarias.</p>
+    </div>
+</section>
+
+<section class="cards-grid">
+
+    <a href="/fiscal/verifactu/" class="module-card">
+
+        <div class="icon-box">
+            <i data-lucide="shield-check"></i>
+        </div>
+
+        <div class="card-content">
+            <h3>VeriFactu</h3>
+            <p>Facturación verificable y trazabilidad AEAT.</p>
+        </div>
+
+        <i data-lucide="arrow-right" class="arrow-icon"></i>
+    </a>
+
+    <a href="/fiscal/liquidaciones" class="module-card">
+
+    <div class="icon-box">
+        <i data-lucide="badge-euro"></i>
+    </div>
+
+    <div class="card-content">
+        <h3>Liquidaciones IVA</h3>
+        <p>Modelos trimestrales y resumen fiscal.</p>
+    </div>
+
+    <i data-lucide="arrow-right" class="arrow-icon"></i>
+
+</a>
+
+    <a href="/fiscal/libros-registro" class="module-card">
+
+    <div class="icon-box">
+        <i data-lucide="book-open"></i>
+    </div>
+
+    <div class="card-content">
+        <h3>Libros registro</h3>
+        <p>Control de facturas emitidas y registros.</p>
+    </div>
+
+    <i data-lucide="arrow-right" class="arrow-icon"></i>
+
+</a>
+
+    <div class="module-card disabled">
+        <div class="icon-box">
+            <i data-lucide="file-spreadsheet"></i>
+        </div>
+
+        <div class="card-content">
+            <h3>Exportaciones</h3>
+            <p>Excel, CSV y documentación fiscal.</p>
+        </div>
+    </div>
+
+    <a href="/fiscal/paquete-asesor" class="module-card">
+    <div class="icon-box">
+        <i data-lucide="package-check"></i>
+    </div>
+
+    <div class="card-content">
+        <h3>Paquete asesor</h3>
+        <p>Informes trimestrales, facturas y ZIP para asesoría.</p>
+    </div>
+
+    <i data-lucide="arrow-right" class="arrow-icon"></i>
+</a>
+
+</section>
+
+<script>
+    lucide.createIcons();
+</script>
+
+{% endblock %}

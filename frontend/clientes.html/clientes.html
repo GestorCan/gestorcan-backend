@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>GestorCan - Clientes</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 10px; }
+        th { background-color: #f4f4f4; }
+        button { padding: 6px 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<h2>🐶 GestorCan - Clientes</h2>
+
+<table id="tabla-clientes">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>DNI</th>
+            <th>Teléfono</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+async function cargarClientes() {
+    const res = await fetch("http://127.0.0.1:8000/clientes");
+    const clientes = await res.json();
+
+    const tbody = document.querySelector("#tabla-clientes tbody");
+    tbody.innerHTML = "";
+
+    clientes.forEach(c => {
+        const fila = `
+            <tr>
+                <td>${c.nombre}</td>
+                <td>${c.dni}</td>
+                <td>${c.telefono}</td>
+                <td>
+                    <button onclick="verFicha(${c.id})">Ver ficha</button>
+                </td>
+            </tr>
+        `;
+        tbody.innerHTML += fila;
+    });
+}
+
+function verFicha(id) {
+    window.location.href = `cliente.html?id=${id}`;
+}
+
+cargarClientes();
+</script>
+
+</body>
+</html>

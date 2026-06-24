@@ -1,0 +1,137 @@
+# GestorCan - Política de Numeración de Facturas tras Migración Can Resort
+
+## Situación inicial
+
+Las facturas históricas de Can Resort correspondientes a los ejercicios 2025 y 2026 fueron emitidas y declaradas sin series diferenciadas.
+
+Ejemplo:
+
+2025:
+
+* Factura 1
+* Factura 2
+* Factura 3
+
+2026:
+
+* Factura 1
+* Factura 2
+* Factura 3
+
+Estas facturas ya han sido emitidas y declaradas fiscalmente.
+
+## Decisión adoptada
+
+Durante la migración a GestorCan:
+
+* Se conservará el número de factura original.
+* No se modificará la numeración histórica.
+* Se utilizará el campo interno "serie" únicamente para diferenciar ejercicios dentro de la base de datos.
+
+Ejemplo:
+
+Factura original: 1 (2025)
+→ numero_factura = "1"
+→ serie = "2025"
+
+Factura original: 1 (2026)
+→ numero_factura = "1"
+→ serie = "2026"
+
+## Facturación durante el resto de 2026
+
+Las nuevas facturas emitidas desde GestorCan continuarán la numeración existente de 2026.
+
+Ejemplo:
+
+Última factura migrada: 574
+
+Primeras facturas emitidas desde GestorCan:
+
+* 575
+* 576
+* 577
+* ...
+
+No se iniciará una nueva serie durante el ejercicio 2026.
+
+## Cambio previsto para 2027
+
+A partir del 01/01/2027 se implantará una serie anual.
+
+Ejemplo:
+
+Serie 2027:
+
+* 2027-000001
+* 2027-000002
+* 2027-000003
+* ...
+
+o el formato que se establezca definitivamente en GestorCan.
+
+## Motivo de la decisión
+
+* Mantener coherencia con las facturas ya emitidas y declaradas.
+* Evitar modificaciones retrospectivas de numeración.
+* Evitar duplicidades en la base de datos.
+* Facilitar auditorías y comprobaciones futuras.
+* Implantar el nuevo sistema de series coincidiendo con el inicio de un nuevo ejercicio fiscal.
+
+
+Residencias:  SQL
+INSERT INTO residencias (
+    id,
+    nombre,
+    razon_social,
+    cif,
+    direccion,
+    telefono,
+    email,
+    web,
+    logo_url,
+    color_principal,
+    color_secundario,
+    iva_defecto,
+    serie_facturacion,
+    hora_checkin,
+    hora_checkout,
+    activa
+)
+VALUES (
+    1,
+    'Can Resort S.I.',
+    'CANRESORTMALAGA SL',
+    'B21840988',
+    'Calle la escuela nº3 Blq 3 4º 1',
+    '672713959',
+    '',
+    '',
+    '/static/logos/residencia_1.png',
+    '#2563eb',
+    '#dbeafe',
+    21,
+    '2026',
+    '12:00',
+    '10:00',
+    1
+);
+
+
+
+
+
+UPDATE estancias
+SET hora_salida = NULL
+WHERE hora_salida = 'None';
+
+
+ESTANCIAS FACTURADAS
+Pero como ya migramos las facturas y cada factura tiene estancia_id, podemos corregirlo fácil:
+UPDATE estancias
+SET facturado = 1
+WHERE id IN (
+    SELECT estancia_id
+    FROM facturas
+    WHERE estancia_id IS NOT NULL
+);

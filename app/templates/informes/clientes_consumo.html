@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">Analytics</span>
+        <h2>Clientes / consumo</h2>
+        <p>Ranking de clientes y consumo acumulado.</p>
+    </div>
+</section>
+
+<section class="panel">
+
+    <table class="table-modern" id="tablaClientes">
+
+        <thead>
+    <tr>
+        <th data-sort="cliente">Cliente</th>
+        <th data-sort="visitas">Visitas</th>
+        <th data-sort="dias">Días</th>
+       <th data-sort="importe">Total gastado</th>
+        <th data-sort="extras">Extras €</th>
+        <th data-sort="camaras">Cámaras €</th>
+        <th data-sort="transporte">Transporte €</th>
+        <th data-sort="veterinario">Veterinario €</th>
+        <th data-sort="ticket_medio">Ticket medio</th>
+        <th data-sort="ultima_estancia">Última estancia</th>
+    </tr>
+</thead>
+
+        <tbody></tbody>
+
+    </table>
+
+</section>
+
+<script>
+let clientesData = [];
+let sortCampo = "importe";
+let sortAsc = false;
+
+function renderTabla() {
+    const tbody = document.querySelector("#tablaClientes tbody");
+    tbody.innerHTML = "";
+
+    clientesData.forEach(cliente => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${cliente.cliente}</td>
+                <td>${cliente.visitas}</td>
+                <td>${cliente.dias}</td>
+                <td>${cliente.importe} €</td>
+                <td>${cliente.extras} €</td>
+                <td>${cliente.camaras} €</td>
+                <td>${cliente.transporte} €</td>
+                <td>${cliente.veterinario} €</td>
+                <td>${cliente.ticket_medio} €</td>
+                <td>${cliente.ultima_estancia}</td>
+            </tr>
+        `;
+    });
+}
+
+function ordenarPor(campo) {
+    if (sortCampo === campo) {
+        sortAsc = !sortAsc;
+    } else {
+        sortCampo = campo;
+        sortAsc = true;
+    }
+
+    clientesData.sort((a, b) => {
+        let valorA = a[campo];
+        let valorB = b[campo];
+
+        if (typeof valorA === "string") {
+            valorA = valorA.toLowerCase();
+            valorB = valorB.toLowerCase();
+        }
+
+        if (valorA < valorB) return sortAsc ? -1 : 1;
+        if (valorA > valorB) return sortAsc ? 1 : -1;
+        return 0;
+    });
+
+    renderTabla();
+}
+
+async function cargarClientesConsumo() {
+    const response = await fetch("/api/clientes-consumo");
+    clientesData = await response.json();
+
+    ordenarPor("importe");
+
+    document.querySelectorAll("#tablaClientes th").forEach(th => {
+        th.addEventListener("click", () => {
+            ordenarPor(th.dataset.sort);
+        });
+    });
+}
+
+cargarClientesConsumo();
+</script>
+
+{% endblock %}

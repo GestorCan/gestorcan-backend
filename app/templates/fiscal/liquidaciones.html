@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">FISCAL</span>
+        <h1>Liquidación IVA {{ trimestre }} {{ fecha_inicio.year }}</h1>
+<p>
+    Período:
+    {{ fecha_inicio.strftime("%d/%m/%Y") }}
+    -
+    {{ fecha_fin.strftime("%d/%m/%Y") }}
+</p>
+    </div>
+</section>
+
+<section class="cards-grid">
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>Base imponible</h3>
+            <p style="font-size:2rem;">
+                {{ base_total_fmt }} €
+            </p>
+        </div>
+    </div>
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>IVA repercutido</h3>
+            <p style="font-size:2rem;">
+                {{ iva_repercutido_fmt }} €
+            </p>
+        </div>
+    </div>
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>IVA soportado</h3>
+            <p style="font-size:2rem;">
+                {{ iva_soportado_fmt }} €
+            </p>
+        </div>
+    </div>
+
+    <div class="module-card">
+        <div class="card-content">
+            <h3>Resultado</h3>
+            <p style="font-size:2rem;">
+                {{ importe_resultado_fmt }} €
+            </p>
+        </div>
+    </div>
+
+</section>
+
+<section class="panel">
+
+    <h2>Liquidación actual</h2>
+
+    <table class="resumen-fiscal">
+
+    <tr>
+        <td>Base imponible</td>
+        <td>{{ base_total_fmt }} €</td>
+    </tr>
+
+    <tr>
+        <td>IVA repercutido</td>
+        <td>{{ iva_repercutido_fmt }} €</td>
+    </tr>
+
+    <tr>
+        <td>Base gastos deducibles</td>
+        <td>{{ base_gastos_fmt }} €</td>
+    </tr>
+
+    <tr>
+        <td>IVA soportado</td>
+        <td>{{ iva_soportado_fmt }} €</td>
+    </tr>
+
+    <tr>
+        <td><strong>{{ estado_resultado }}</strong></td>
+        <td><strong>{{ importe_resultado_fmt }} €</strong></td>
+    </tr>
+
+</table>
+
+
+
+
+</section>
+<style>
+.resumen-fiscal {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 420px;
+}
+
+.resumen-fiscal td {
+    padding: 4px 0;
+}
+
+.resumen-fiscal td:first-child {
+    width: 70%;
+}
+
+.resumen-fiscal td:last-child {
+    width: 30%;
+    text-align: right;
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
+}
+
+.resumen-fiscal tr:last-child td {
+    padding-top: 8px;
+    font-weight: bold;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">Analytics</span>
+        <h2>Comparativas anuales</h2>
+        <p>Evolución anual del negocio.</p>
+    </div>
+</section>
+
+<section class="panel">
+
+    <div class="chart-card">
+
+        <h3>Ingresos anuales</h3>
+
+        <canvas id="ingresosAnualesChart"></canvas>
+
+    </div>
+
+    <div class="chart-card" style="margin-top:32px;">
+
+        <h3>Estancias anuales</h3>
+
+        <canvas id="estanciasAnualesChart"></canvas>
+
+    </div>
+
+    <div style="margin-top:32px; overflow-x:auto;">
+
+        <table class="table-modern" id="tablaAnual">
+
+            <thead>
+                <tr>
+                    <th>Año</th>
+                    <th>Ingresos</th>
+                    <th>Estancias</th>
+                    <th>Clientes</th>
+                    <th>Días</th>
+                    <th>Ticket medio</th>
+                </tr>
+            </thead>
+
+            <tbody></tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+async function cargarComparativasAnuales() {
+
+    const response = await fetch("/api/comparativas-anuales");
+
+    const data = await response.json();
+
+    const labels = data.map(x => x.año);
+
+    // =========================
+    // INGRESOS
+    // =========================
+
+    new Chart(
+        document.getElementById("ingresosAnualesChart"),
+        {
+            type: "bar",
+
+            data: {
+                labels: labels,
+
+                datasets: [{
+                    label: "Ingresos €",
+                    data: data.map(x => x.ingresos),
+                    backgroundColor: "#2563eb"
+                }]
+            },
+
+            options: {
+                responsive: true
+            }
+        }
+    );
+
+    // =========================
+    // ESTANCIAS
+    // =========================
+
+    new Chart(
+        document.getElementById("estanciasAnualesChart"),
+        {
+            type: "line",
+
+            data: {
+                labels: labels,
+
+                datasets: [{
+                    label: "Estancias",
+                    data: data.map(x => x.estancias),
+                    borderColor: "#10b981",
+                    backgroundColor: "#10b981"
+                }]
+            },
+
+            options: {
+                responsive: true
+            }
+        }
+    );
+
+    // =========================
+    // TABLA
+    // =========================
+
+    const tbody = document.querySelector("#tablaAnual tbody");
+
+    tbody.innerHTML = "";
+
+    data.forEach(x => {
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${x.año}</td>
+                <td>${x.ingresos} €</td>
+                <td>${x.estancias}</td>
+                <td>${x.clientes}</td>
+                <td>${x.dias}</td>
+                <td>${x.ticket_medio} €</td>
+            </tr>
+        `;
+    });
+}
+
+cargarComparativasAnuales();
+
+</script>
+
+{% endblock %}
