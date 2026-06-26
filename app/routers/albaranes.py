@@ -24,18 +24,20 @@ def get_albaranes(cliente: str | None = None, fecha: str | None = None):
 
 @router.get("/{estancia_id}/pdf")
 def ver_pdf_albaran(estancia_id: int):
-    ruta_pdf = obtener_ruta_pdf_albaran(estancia_id)
+    ruta_pdf = regenerar_pdf_albaran(estancia_id)
 
-    if not ruta_pdf or not Path(ruta_pdf).exists():
-        ruta_pdf = regenerar_pdf_albaran(estancia_id)
+    if not ruta_pdf:
+        raise HTTPException(status_code=404, detail="Estancia no encontrada")
 
-    if not ruta_pdf or not Path(ruta_pdf).exists():
-        raise HTTPException(status_code=404, detail="PDF no encontrado")
+    ruta_path = Path(ruta_pdf)
+
+    if not ruta_path.exists():
+        raise HTTPException(status_code=404, detail="PDF no encontrado tras generarlo")
 
     return FileResponse(
-        ruta_pdf,
+        str(ruta_path),
         media_type="application/pdf",
-        filename=Path(ruta_pdf).name
+        filename=ruta_path.name
     )
 
 

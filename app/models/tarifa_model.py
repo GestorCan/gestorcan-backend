@@ -3,7 +3,6 @@
 from sqlalchemy import Column, Integer, String, Float, Boolean
 from app.database import Base
 
-
 class Tarifa(Base):
     __tablename__ = "tarifas"
 
