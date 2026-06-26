@@ -1,5 +1,7 @@
 from app.database import SessionLocal
 from app.models.tarifa_model import Tarifa
+from sqlalchemy import func
+
 
 
 def obtener_precio_tarifa(concepto: str, tipo: str):
@@ -9,8 +11,8 @@ def obtener_precio_tarifa(concepto: str, tipo: str):
         tarifa = (
             db.query(Tarifa)
             .filter(
-                Tarifa.concepto == concepto,
-                Tarifa.tipo == tipo,
+                func.lower(Tarifa.concepto) == concepto.lower(),
+                func.lower(Tarifa.tipo) == tipo.lower(),
                 Tarifa.activo == True
             )
             .first()

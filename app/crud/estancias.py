@@ -75,13 +75,22 @@ def crear_estancia(db: Session, estancia: EstanciaCreate):
         kms = float(estancia.kilometros or 0)
         importe_transporte = kms * precio_km
 
+        # 🔹 PIENSO
+    importe_pienso = 0
+    if estancia.pienso:
+        precio = obtener_precio_tarifa("servicio", "Pienso")
+        importe_pienso = precio * dias
+
+
     # 🔹 TOTAL
     total = (
         subtotal
         + importe_camaras
         + importe_extras
         + importe_veterinario
+        + importe_pienso
         + importe_transporte
+
     )
 
     datos["num_dias"] = dias
@@ -90,6 +99,7 @@ def crear_estancia(db: Session, estancia: EstanciaCreate):
     datos["importe_camaras"] = importe_camaras
     datos["importe_extras"] = importe_extras
     datos["importe_veterinario"] = importe_veterinario
+    datos["importe_pienso"] = importe_pienso
     datos["importe_transporte"] = importe_transporte
     datos["total"] = total
 
