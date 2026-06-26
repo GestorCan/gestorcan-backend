@@ -71,7 +71,7 @@ def crear_estancia(db: Session, estancia: EstanciaCreate):
     # 🔹 TRANSPORTE
     importe_transporte = 0
     if estancia.transporte:
-        precio_km = obtener_precio_tarifa("transporte_km", "km")
+        precio_km = obtener_precio_tarifa("servicio", "Transporte")
         kms = float(estancia.kilometros or 0)
         importe_transporte = kms * precio_km
 
