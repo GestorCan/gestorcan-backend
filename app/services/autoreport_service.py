@@ -14,6 +14,8 @@ def _env_bool(nombre: str, defecto: bool = False) -> bool:
 
 
 def ejecutar_autoreport():
+    print("DEBUG AUTOREPORTS_ACTIVO =", os.getenv("AUTOREPORTS_ACTIVO"))
+
     if not _env_bool("AUTOREPORTS_ACTIVO", False):
         print("Autoreports desactivado.")
         return
