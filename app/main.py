@@ -49,7 +49,23 @@ from app.models.tipo_gasto import TipoGasto
 from app.models.residencias import Residencia
 from app.models.contador_factura import ContadorFactura
 from app.models.verifactu_registro import VeriFactuRegistro
+from app.services.scheduler_service import iniciar_scheduler, parar_scheduler
+from app.routers import pruebas
+
+
+
 app = FastAPI()
+
+@app.on_event("startup")
+def startup_event():
+    iniciar_scheduler()
+
+
+@app.on_event("shutdown")
+def shutdown_event():
+    parar_scheduler()
+
+app.include_router(pruebas.router)
 
 Base.metadata.create_all(bind=engine)
 
@@ -74,7 +90,7 @@ STATIC_PATH = os.path.join(ROOT_DIR, "static")
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 os.makedirs("media", exist_ok=True)
 app.mount("/media", StaticFiles(directory="media"), name="media")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+
 templates = Jinja2Templates(directory="app/templates")
 
 
@@ -84,7 +100,16 @@ def home():
         url="/Dashboard"
     )
 
+@app.get("/admin/test-autoreport")
+def test_autoreport():
+    from app.services.autoreport_service import ejecutar_autoreport
 
+    ejecutar_autoreport()
+
+    return {
+        "ok": True,
+        "mensaje": "Autoreport ejecutado"
+    }
 
 
 
