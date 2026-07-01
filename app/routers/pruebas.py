@@ -15,6 +15,9 @@ def test_autoreport():
 
 @router.get("/admin/test-smtp")
 def test_smtp():
+    import os
+    import smtplib
+
     smtp_host = os.getenv("SMTP_HOST")
     smtp_port = int(os.getenv("SMTP_PORT", "465"))
     smtp_user = os.getenv("SMTP_USER")
@@ -24,7 +27,7 @@ def test_smtp():
     print("SMTP_PORT:", smtp_port)
     print("SMTP_USER:", smtp_user)
 
-    with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=15) as smtp:
+    with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=5) as smtp:
         smtp.login(smtp_user, smtp_password)
 
-    return {"ok": True, "mensaje": "SMTP SSL correcto"}
+    return {"ok": True}
