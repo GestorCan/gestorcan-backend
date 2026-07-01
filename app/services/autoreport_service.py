@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 import os
 
-from app.services.email_service import enviar_email
+from app.services.email_resend_service import enviar_email_resend
 from app.services.report_trabajo_service import generar_informe_trabajo_pdf
 from app.services.report_ocupacion_service import generar_informe_ocupacion_pdf
 from app.database import SessionLocal
@@ -62,7 +62,7 @@ Adjuntos:
 - Informe de Ocupación próximos 7 días
 """
 
-        enviar_email(
+        enviar_email_resend(
             asunto=asunto,
             cuerpo=cuerpo,
             destinatarios=lista_destinatarios,
