@@ -322,7 +322,7 @@ app.include_router(proveedores.router)
 app.include_router(tipos_gasto.router)
 
 
-
+app.include_router(pruebas.router)
 
 
 # FISCAL

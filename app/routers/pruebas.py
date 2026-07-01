@@ -1,12 +1,20 @@
-from fastapi import APIRouter
+ffrom fastapi import APIRouter
 import os
 import smtplib
 
+from app.services.autoreport_service import ejecutar_autoreport
+
 router = APIRouter()
+
+
+@router.get("/admin/test-autoreport")
+def test_autoreport():
+    ejecutar_autoreport()
+    return {"ok": True, "mensaje": "Autoreport ejecutado"}
+
 
 @router.get("/admin/test-smtp")
 def test_smtp():
-
     smtp_host = os.getenv("SMTP_HOST")
     smtp_port = int(os.getenv("SMTP_PORT", "587"))
     smtp_user = os.getenv("SMTP_USER")
@@ -22,7 +30,4 @@ def test_smtp():
         smtp.ehlo()
         smtp.login(smtp_user, smtp_password)
 
-    return {
-        "ok": True,
-        "mensaje": "Conexión SMTP correcta"
-    }
+    return {"ok": True, "mensaje": "Conexión SMTP correcta"}
