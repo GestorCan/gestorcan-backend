@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="hero">
+    <div>
+        <span class="eyebrow">CONFIGURACIÓN</span>
+        <h1>Autoreports</h1>
+        <p>Configura el envío automático de informes de GestorCan.</p>
+    </div>
+</section>
+
+<div style="margin-bottom:1.5rem;">
+    <a href="/config-residencia"
+       class="btn-secondary"
+       style="display:inline-block;text-decoration:none;">
+        ← Volver a Configuración Residencia
+    </a>
+</div>
+
+{% if mensaje %}
+    <div class="alert-success" style="margin-bottom:1rem;">
+        {{ mensaje }}
+    </div>
+{% endif %}
+
+{% if error %}
+    <div class="alert-error" style="margin-bottom:1rem;">
+        {{ error }}
+    </div>
+{% endif %}
+
+<section class="module-card" style="padding:2rem;">
+
+    <form method="post" action="/dashboard/configuracion/autoreports">
+
+        <div class="form-section">
+            <h3>Envío automático</h3>
+
+            <div class="fila-check" style="margin-bottom:1.5rem;">
+                <input type="checkbox" name="activo" id="activo"
+                       {% if cfg.activo %}checked{% endif %}>
+                <label for="activo">Activar autoreports</label>
+            </div>
+
+            <div class="form-grid-3">
+                <div>
+                    <label>Hora de envío</label>
+                    <input type="time" name="hora_envio"
+                           value="{{ cfg.hora_envio or '21:00' }}"
+                           required>
+                </div>
+
+                <div>
+                    <label>Días planificación</label>
+                    <input type="number" name="dias_adelante"
+                           value="{{ cfg.dias_adelante or 1 }}"
+                           min="0">
+                </div>
+
+                <div>
+                    <label>Días ocupación</label>
+                    <input type="number" name="dias_ocupacion"
+                           value="{{ cfg.dias_ocupacion or 7 }}"
+                           min="1">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section" style="margin-top:2rem;">
+            <h3>Destinatarios</h3>
+
+            <label>Correos de recepción</label>
+            <textarea name="destinatarios"
+                      rows="5"
+                      required
+                      style="width:100%;"
+                      placeholder="correo1@gmail.com, correo2@gmail.com">{{ cfg.destinatarios or '' }}</textarea>
+
+            <p style="margin-top:.75rem; opacity:.75;">
+                Puedes separar varios correos con comas.
+            </p>
+        </div>
+
+        <div class="acciones-form" style="margin-top:2rem; display:flex; gap:1rem; align-items:center;">
+            <button type="submit" class="btn-primary">
+                Guardar configuración
+            </button>
+        </div>
+
+    </form>
+
+    <form method="post"
+          action="/dashboard/configuracion/autoreports/test"
+          style="margin-top:1rem;">
+        <button type="submit" class="btn-primary">
+            Enviar prueba ahora
+        </button>
+    </form>
+
+</section>
+
+{% endblock %}

@@ -51,7 +51,7 @@ from app.models.contador_factura import ContadorFactura
 from app.models.verifactu_registro import VeriFactuRegistro
 from app.services.scheduler_service import iniciar_scheduler, parar_scheduler
 from app.routers import pruebas
-
+from app.routers import configuracion_autoreport_router
 
 
 app = FastAPI()
@@ -323,7 +323,7 @@ app.include_router(tipos_gasto.router)
 
 
 app.include_router(pruebas.router)
-
+app.include_router(configuracion_autoreport_router.router)
 
 # FISCAL
 app.include_router(fiscal.router,prefix="/fiscal",tags=["Fiscal"])
@@ -332,6 +332,7 @@ app.include_router(fiscal.router,prefix="/fiscal",tags=["Fiscal"])
 app.include_router(verifactu.router,prefix="/fiscal/verifactu",tags=["VeriFactu"])
 
 app.include_router(verifactu.router)
+
 
 
 

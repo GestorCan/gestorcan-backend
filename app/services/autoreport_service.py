@@ -1,34 +1,28 @@
 from datetime import date, timedelta
-import os
 
 from app.services.email_resend_service import enviar_email_resend
 from app.services.report_trabajo_service import generar_informe_trabajo_pdf
 from app.services.report_ocupacion_service import generar_informe_ocupacion_pdf
 from app.database import SessionLocal
-
-def _env_bool(nombre: str, defecto: bool = False) -> bool:
-    valor = os.getenv(nombre)
-    if valor is None:
-        return defecto
-    return valor.lower() in ("true", "1", "yes", "si", "sí")
+from app.models.configuracion_autoreport import ConfiguracionAutoreport
 
 
 def ejecutar_autoreport():
 
-    print("DEBUG AUTOREPORTS_ACTIVO =", os.getenv("AUTOREPORTS_ACTIVO"))
-    print("TODAS LAS VARIABLES AUTOREPORT:")
-    for k, v in os.environ.items():
-        if "AUTOREPORT" in k:
-            print(k, "=", v)
-    if not _env_bool("AUTOREPORTS_ACTIVO", False):
-        print("Autoreports desactivado.")
-        return
-
     db = SessionLocal()
 
     try:
-        dias_adelante = int(os.getenv("AUTOREPORT_DIAS_ADELANTE", "1"))
+        cfg = db.query(ConfiguracionAutoreport).first()
 
+        if not cfg:
+            print("No existe configuración de autoreports.")
+            return
+
+        if not cfg.activo:
+            print("Autoreports desactivado desde configuración.")
+            return
+
+        dias_adelante = cfg.dias_adelante or 1
         fecha_trabajo = date.today() + timedelta(days=dias_adelante)
 
         pdf_trabajo = generar_informe_trabajo_pdf(
@@ -40,17 +34,16 @@ def ejecutar_autoreport():
             db=db
         )
 
-        asunto = f"GestorCan - Planificación de mañana {fecha_trabajo.strftime('%d/%m/%Y')}"
-
-        destinatarios = os.getenv("AUTOREPORT_DESTINATARIOS", "")
         lista_destinatarios = [
             email.strip()
-            for email in destinatarios.split(",")
+            for email in (cfg.destinatarios or "").split(",")
             if email.strip()
         ]
 
         if not lista_destinatarios:
-            raise ValueError("Falta AUTOREPORT_DESTINATARIOS en el .env")
+            raise ValueError("No hay destinatarios configurados en Autoreports")
+
+        asunto = f"GestorCan - Planificación de mañana {fecha_trabajo.strftime('%d/%m/%Y')}"
 
         cuerpo = f"""
 GestorCan - Planificación diaria
