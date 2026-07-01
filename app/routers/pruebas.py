@@ -27,7 +27,20 @@ def test_smtp():
     print("SMTP_PORT:", smtp_port)
     print("SMTP_USER:", smtp_user)
 
-    with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=5) as smtp:
+    with smtplib.SMTP(smtp_host, 587, timeout=10) as smtp:
+        smtp.ehlo()
+
+        print("Conectado")
+        print("Iniciando STARTTLS")
+
+        smtp.starttls()
+
+        smtp.ehlo()
+
+        print("Autenticando")
+
         smtp.login(smtp_user, smtp_password)
+
+        print("Login correcto")
 
     return {"ok": True}
