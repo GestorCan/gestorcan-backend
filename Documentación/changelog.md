@@ -665,3 +665,40 @@ Pendiente documentado
 🔹 Servicios adicionales parametrizables (Pienso, Medicación, etc.).
 
 Con esto el módulo de estancias queda bastante sólido y preparado para seguir creciendo sin tener que volver a tocar precios en el código. 🚀
+
+
+í, merece la pena apuntarlo como mejora para después de la Beta.
+
+De hecho encaja bastante bien con la filosofía que ya estás siguiendo en GestorCan:
+
+Railway / .env → configuración técnica y secreta.
+SMTP_HOST
+SMTP_USER
+SMTP_PASSWORD
+DATABASE_URL
+Base de datos / panel de administración → configuración funcional.
+Destinatarios de informes
+Hora de envío
+Días de ocupación
+Activar/desactivar autoreport
+Posibles futuros informes automáticos
+
+Incluso lo veo como una futura sección:
+
+Configuración
+ └── Informes automáticos
+
+
+
+
+
+
+
+
+Lo dejaría anotado en la lista de mejoras post-Beta 1.0 junto con otras que ya habíamos detectado:
+
+Servicios diarios (medicación, etc.).
+Extras dinámicos en albaranes y listados.
+Configuración de autoreports desde la aplicación.
+Posibles notificaciones adicionales por email.
+
