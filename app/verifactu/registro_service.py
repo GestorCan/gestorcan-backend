@@ -32,9 +32,23 @@ from app.verifactu.constants import (
     ESTADO_ERROR,
     TIPO_ALTA
 )
+from app.verifactu.config import (
+    firma_real_activada,
+    verifactu_envio_real
+)
+
+from app.verifactu.config import (
+    firma_real_activada,
+    verifactu_envio_real
+)
 
 def firmar_xml_verifactu(xml_path: str):
-    if firma_real_activada():
+
+    if (
+        firma_real_activada()
+        and
+        verifactu_envio_real()
+    ):
         return firmar_xml_real(xml_path)
 
     return firmar_xml_simulado(xml_path)
@@ -48,6 +62,13 @@ def firmar_registro_verifactu(db, registro):
 
     if registro.signed_xml_path:
         raise Exception("El registro ya está firmado")
+
+    # En beta / sin envío real, no firmamos con certificado
+    if not verifactu_envio_real():
+        registro.estado = ESTADO_FIRMADO
+        db.commit()
+        db.refresh(registro)
+        return registro
 
     firma_resultado = firmar_xml_verifactu(registro.xml_path)
 

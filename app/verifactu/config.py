@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import os
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -47,3 +47,38 @@ CERT_PASSWORD = ""
 AEAT_URL_TEST = "https://prewww2.aeat.es/"
 
 AEAT_URL_PRODUCCION = "https://www2.agenciatributaria.gob.es/"
+
+
+
+
+def verifactu_activado():
+    return os.getenv(
+        "VERIFACTU_ENABLED",
+        "false"
+    ).lower() == "true"
+
+
+def firma_real_activada():
+    return os.getenv(
+        "VERIFACTU_FIRMA_REAL",
+        "false"
+    ).lower() == "true"
+
+
+def verifactu_envio_real():
+    return os.getenv(
+        "VERIFACTU_ENVIO_REAL",
+        "false"
+    ).lower() == "true"
+
+
+def entorno_verifactu():
+    return os.getenv(
+        "VERIFACTU_ENV",
+        "test"
+    )
+def verifactu_envio_real():
+    return os.getenv(
+        "VERIFACTU_ENVIO_REAL",
+        "false"
+    ).lower() == "true"
