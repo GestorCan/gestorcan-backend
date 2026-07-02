@@ -1,12 +1,7 @@
 # app/verifactu/qr_service.py
 
-import os
 from pathlib import Path
 import qrcode
-
-
-from app.verifactu.config import QR_DIR
-
 
 
 QR_DIR = Path("media/qr")
@@ -38,5 +33,8 @@ def generar_qr_factura(factura):
     output_path = QR_DIR / f"factura_{factura.numero_factura}.png"
 
     img.save(str(output_path))
+
+    print("QR generado:", output_path)
+    print("Existe QR:", output_path.exists())
 
     return str(output_path)
