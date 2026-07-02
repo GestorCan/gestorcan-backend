@@ -39,7 +39,7 @@
 
 <div class="field">
     <label>Número de documento</label>
-    <input type="text" name="dni" value="{{ cliente.dni or '' }}">
+    <input type="text" name="dni" value="{{ cliente.dni or '' }}" required>
 </div>
       </div>
    {% if error %}
@@ -158,16 +158,16 @@ setTimeout(() => {
 
 
     <form method="post"
-          action="/dashboard/mascotas/{{ m.id }}/eliminar"
-          style="display:inline;">
+      action="/dashboard/mascotas/{{ m.id }}/eliminar"
+      style="display:inline;">
 
-        <button class="vf-button danger"
-                type="submit"
-                onclick="return confirm('¿Eliminar esta mascota? Esta acción no se puede deshacer.');">
-            Eliminar
-        </button>
+    <button class="vf-button danger"
+            type="button"
+            onclick="confirmarEliminacionMascota(this.form)">
+        Eliminar
+    </button>
 
-    </form>
+</form>
 
 </div>
             </div>
@@ -203,4 +203,20 @@ setTimeout(() => {
 
 </style>
 </section>
+<script>
+function confirmarEliminacionMascota(formulario) {
+    Swal.fire({
+        title: '¿Eliminar mascota?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            formulario.submit();
+        }
+    });
+}
+</script>
 {% endblock %}

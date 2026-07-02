@@ -113,12 +113,26 @@ def obtener_ficha_cliente(cliente_id: int, db: Session = Depends(get_db)):
         "mascotas": mascotas
     }
 
+
 @router.delete("/{cliente_id}")
-def borrar_cliente(cliente_id: int, db: Session = Depends(get_db)):
+def borrar_cliente(
+    cliente_id: int,
+    db: Session = Depends(get_db)
+):
     cliente = db.query(Cliente).filter(Cliente.id == cliente_id).first()
 
     if not cliente:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
+
+    mascotas_asociadas = db.query(Mascota).filter(
+        Mascota.cliente_id == cliente_id
+    ).count()
+
+    if mascotas_asociadas > 0:
+        raise HTTPException(
+            status_code=400,
+            detail="No se puede eliminar el cliente porque tiene mascotas asociadas."
+        )
 
     db.delete(cliente)
     db.commit()

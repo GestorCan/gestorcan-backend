@@ -22,6 +22,10 @@
             <p>Propietarios dados de alta en GestorCan.</p>
         </div>
     </div>
+
+
+
+
 <div class="listado-toolbar">
 
     <form method="get" action="/dashboard/clientes" style="display:flex; gap:10px; width:100%;">
@@ -48,6 +52,34 @@
     </form>
 
 </div>
+{% if error == "cliente_con_mascotas" %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    Swal.fire({
+        icon: 'error',
+        title: 'No se puede eliminar',
+        text: 'El cliente tiene mascotas asociadas.',
+        confirmButtonText: 'Aceptar'
+    });
+});
+</script>
+{% endif %}
+
+{% if error == "cliente_con_estancias" %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    Swal.fire({
+        icon: 'error',
+        title: 'No se puede eliminar',
+        text: 'El cliente tiene estancias asociadas.',
+        confirmButtonText: 'Aceptar'
+    });
+});
+</script>
+{% endif %}
+
+
+
     <div class="table-wrap table-scroll">
 
         <table
@@ -150,22 +182,15 @@
                                 Editar
                             </a>
 
-                            <form
-                                method="post"
-                                action="/dashboard/clientes/{{ c.id }}/eliminar"
-                            >
-
-                                <button
-                                    class="vf-button danger"
-                                    type="submit"
-                                    onclick="return confirm('¿Eliminar este cliente?');"
-                                >
-
-                                    Eliminar
-
-                                </button>
-
-                            </form>
+                            <form method="post" action="/dashboard/clientes/{{ c.id }}/eliminar">
+    <button
+        class="vf-button danger"
+        type="button"
+        onclick="confirmarEliminacion(this.form)"
+    >
+        Eliminar
+    </button>
+</form>
 
                         </div>
 
@@ -174,6 +199,9 @@
                 </tr>
 
                 {% endfor %}
+
+
+
 
             </tbody>
 
@@ -207,6 +235,7 @@
     </div>
 
 </section>
+
 
 <script>
 
@@ -313,6 +342,34 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+}
+ .toast-error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    border-left: 6px solid #dc2626;
+    padding: 14px 18px;
+    border-radius: 14px;
+    font-weight: 700;
+    margin: 18px 0;
+    box-shadow: 0 8px 22px rgba(220, 38, 38, 0.12);
+}
+
+</script>
+<script>
+function confirmarEliminacion(formulario) {
+    Swal.fire({
+        title: '¿Eliminar cliente?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            formulario.submit();
+        }
+    });
 }
 </script>
 

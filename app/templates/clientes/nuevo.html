@@ -28,7 +28,7 @@
 
             <div class="field">
     <label>Tipo de documento</label>
-    <select name="tipo_documento">
+    <select name="tipo_documento" required>
         <option value="NIF" selected>NIF</option>
         <option value="NIE">NIE</option>
         <option value="CIF">CIF</option>
@@ -39,7 +39,7 @@
 
 <div class="field">
     <label>Número de documento</label>
-    <input type="text" name="dni">
+     <input type="text" name="dni" required>
 </div>
    {% if error %}
 <div class="toast-error">

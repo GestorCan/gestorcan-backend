@@ -77,9 +77,10 @@ def listado_estancias(
     )
 
     if facturado == "1":
-        query = query.filter(Estancia.facturado == 1)
+        query = query.filter(Estancia.facturado == True)
+
     elif facturado == "0":
-        query = query.filter(Estancia.facturado == 0)
+        query = query.filter(Estancia.facturado == False)
 
     if buscar:
         texto = f"%{buscar}%"

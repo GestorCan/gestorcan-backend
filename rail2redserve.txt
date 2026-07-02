@@ -1,0 +1,22 @@
+# Abrir proyecto
+venv\Scripts\activate
+
+# Comprobar Git
+git status
+
+# Comprobar Railway
+railway status
+
+# (Opcional) Ver logs mientras desarrollas
+railway logs
+
+
+re_C4LNL4yJ_JNS97dAYnUP1fjhjuKp3gGEc
+
+
+
+GestorCan Production
+re_LQCm4b3q_3t3bfTy3DLrPUbk8XUW7i7Go
+
+
+https://gestorcan-backend-production.up.railway.app/admin/test-smtp

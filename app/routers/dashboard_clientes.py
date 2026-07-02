@@ -13,7 +13,9 @@ from app.utils.validadores_fiscales import (
 from fastapi import HTTPException
 from typing import Optional
 from sqlalchemy import or_
-
+from app.models.clientes import Cliente
+from app.models.mascotas import Mascota
+from app.models.estancia import Estancia
 
 
 
@@ -41,11 +43,39 @@ def eliminar_cliente(
 ):
     cliente = db.query(Cliente).filter(Cliente.id == cliente_id).first()
 
-    if cliente:
-        db.delete(cliente)
-        db.commit()
+    if not cliente:
+        return RedirectResponse(
+            url="/dashboard/clientes?error=cliente_no_encontrado",
+            status_code=303
+        )
 
-    return RedirectResponse(url="/dashboard/clientes", status_code=303)
+    mascotas_asociadas = db.query(Mascota).filter(
+        Mascota.cliente_id == cliente_id
+    ).count()
+
+    if mascotas_asociadas > 0:
+        return RedirectResponse(
+            url="/dashboard/clientes?error=cliente_con_mascotas",
+            status_code=303
+        )
+
+    estancias_asociadas = db.query(Estancia).filter(
+        Estancia.cliente_id == cliente_id
+    ).count()
+
+    if estancias_asociadas > 0:
+        return RedirectResponse(
+            url="/dashboard/clientes?error=cliente_con_estancias",
+            status_code=303
+        )
+
+    db.delete(cliente)
+    db.commit()
+
+    return RedirectResponse(
+        url="/dashboard/clientes?ok=cliente_eliminado",
+        status_code=303
+    )
 @router.get("/dashboard/clientes/nuevo")
 def nuevo_cliente_form(request: Request):
     return templates.TemplateResponse(
@@ -107,6 +137,18 @@ def guardar_edicion_cliente(
                 context={
                     "cliente": cliente,
                     "error": "Ya existe otro cliente con ese documento."
+                },
+                status_code=400
+            )
+        dni = limpiar_documento_fiscal(dni)
+
+        if not dni:
+            return templates.TemplateResponse(
+                request=request,
+                name="clientes/editar.html",
+                context={
+                    "cliente": cliente,
+                    "error": "El número de documento es obligatorio."
                 },
                 status_code=400
             )
@@ -172,7 +214,7 @@ def crear_cliente_desde_dashboard(
     request: Request,
     nombre: str = Form(...),
     apellidos: str = Form(None),
-    dni: str = Form(None),
+    dni: str = Form(...),
     tipo_documento: str = Form("NIF"),
     telefono: str = Form(None),
     email: str = Form(None),
@@ -185,21 +227,41 @@ def crear_cliente_desde_dashboard(
     db: Session = Depends(get_db),
 
 ):
-    if dni:
+    dni = limpiar_documento_fiscal(dni)
 
-        dni = limpiar_documento_fiscal(dni)
+    if not dni:
+        return templates.TemplateResponse(
+            request=request,
+            name="clientes/nuevo.html",
+            context={
+                "error": "El número de documento es obligatorio."
+            },
+            status_code=400
+        )
 
-        if tipo_documento in ("NIF", "NIE"):
+    if tipo_documento in ("NIF", "NIE"):
+        if not validar_nif_nie(dni):
+            return templates.TemplateResponse(
+                request=request,
+                name="clientes/nuevo.html",
+                context={
+                    "error": "El documento introducido no es válido."
+                },
+                status_code=400
+            )
+    cliente_existente = db.query(Cliente).filter(
+        Cliente.dni == dni
+    ).first()
 
-            if not validar_nif_nie(dni):
-                return templates.TemplateResponse(
-                    request=request,
-                    name="clientes/nuevo.html",
-                    context={
-                        "error": "El documento introducido no es válido."
-                    },
-                    status_code=400
-                )
+    if cliente_existente:
+        return templates.TemplateResponse(
+            request=request,
+            name="clientes/nuevo.html",
+            context={
+                "error": f"Ya existe un cliente con el documento {dni}."
+            },
+            status_code=400
+        )
 
     nuevo_cliente = Cliente(
         nombre=nombre,
@@ -226,10 +288,13 @@ def crear_cliente_desde_dashboard(
     )
 
 
+
 @router.get("/dashboard/clientes")
 def dashboard_clientes(
     request: Request,
     buscar: Optional[str] = None,
+    error: Optional[str] = None,
+    ok: Optional[str] = None,
     page: int = 1,
     limit: int = 100,
     db: Session = Depends(get_db)
@@ -271,5 +336,7 @@ def dashboard_clientes(
             "limit": limit,
             "total": total,
             "total_pages": (total + limit - 1) // limit,
+            "error": error,
+            "ok": ok,
         }
     )

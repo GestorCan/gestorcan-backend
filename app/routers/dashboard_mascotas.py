@@ -122,21 +122,33 @@ def nueva_mascota_form(
     )
 @router.post("/dashboard/mascotas/nueva")
 def crear_mascota_dashboard(
+    request: Request,
     cliente_id: int = Form(...),
     nombre: str = Form(...),
     raza: str = Form(None),
     sexo: str = Form(None),
     tamano: str = Form(None),
     edad: str = Form(None),
-    numero_chip: str = Form(None),
+    numero_chip: str = Form(...),
     vacunas: str = Form(None),
-    comportamiento_personas: str = Form(None),
-    comportamiento_perros: str = Form(None),
+    comportamiento_personas: str = Form(...),
+    comportamiento_perros: str = Form(...),
     enfermedades_medicacion: str = Form(None),
     observaciones: str = Form(None),
     foto: UploadFile = File(None),
     db: Session = Depends(get_db)
 ):
+    numero_chip = numero_chip.strip()
+
+    if not numero_chip:
+        return templates.TemplateResponse(
+            request=request,
+            name="mascotas/nueva.html",
+            context={
+                "error": "El número de chip es obligatorio."
+            },
+            status_code=400
+        )
     mascota = Mascota(
         cliente_id=cliente_id,
         nombre=nombre,
