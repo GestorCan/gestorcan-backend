@@ -66,7 +66,7 @@ def crear_factura_desde_estancia(db: Session, estancia_id: int):
     db.flush()
 
     from app.verifactu.settings import verifactu_activado
-
+    print("VERIFACTU ACTIVADO:", verifactu_activado())
     if verifactu_activado():
         preparar_registro_verifactu(db, factura)
 
@@ -84,6 +84,11 @@ def crear_factura_desde_estancia(db: Session, estancia_id: int):
     db.refresh(factura)
 
     return factura
+
+
+
+
+
 def listar_facturas_con_verifactu(db):
     facturas = listar_facturas(db)
 
