@@ -278,9 +278,9 @@ def dashboard(
         },
         {
             "nombre": "Habitaciones",
-            "descripcion": "Ocupación, estados y planificación visual",
+            "descripcion": f"{estancias_activas} ocupadas · {capacidad_total - estancias_activas} libres · {ocupacion}% ocupación",
             "icono": "bed-double",
-            "url": "/dashboard-habitaciones"
+            "url": "/ocupacion"
         },
         {
             "nombre": "Residencia",
