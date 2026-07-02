@@ -236,6 +236,7 @@ def dashboard(
         )
         .all()
     )
+    residencia = db.query(Residencia).first()
 
     for e in estancias_mes:
         ingresos_mes += float(e.total or 0)
@@ -298,6 +299,7 @@ def dashboard(
             "titulo": "Dashboard",
             "datos": datos,
             "modulos": modulos,
+            "residencia": residencia,
         }
     )
 

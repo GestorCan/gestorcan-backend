@@ -12,7 +12,7 @@
 <section class="hero">
     <div>
         <span class="eyebrow">Panel principal</span>
-        <h2>Bienvenido a GestorCan</h2>
+        <h2>Bienvenido a {{ residencia.nombre if residencia else 'GestorCan' }}</h2>
         <p>Gestiona clientes, mascotas, estancias, tarifas y facturación desde un único panel.</p>
     </div>
 
