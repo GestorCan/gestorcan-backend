@@ -70,7 +70,7 @@ def preparar_registro_verifactu(db, factura):
 
     residencia = (
         db.query(Residencia)
-        .filter(Residencia.activa == True)
+        .filter(Residencia.activa == 1)
         .first()
     )
 
