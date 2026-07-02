@@ -257,7 +257,7 @@ def crear_factura_rectificativa(
 
     residencia = (
         db.query(Residencia)
-        .filter(Residencia.activa == True)
+        .filter(Residencia.activa == 1)
         .first()
     )
 
